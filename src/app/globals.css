@@ -2,26 +2,396 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    background-color: #1A1A1A;
+    color: #F0EDE6;
+    font-family: var(--font-body), "DM Sans", sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Background ambient glow — fixed, full viewport, no pointer capture */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(200, 169, 110, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(123, 168, 134, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Scrollbar styling for the chat area */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #3A3A3A;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #4A4A4A;
+}
+
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2.4rem !important;
+  }
+}
+
+@keyframes scrollUnfurl {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scripture-header-enter {
+  animation: scrollUnfurl 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.scripture-section-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.scripture-section-visible {
+  animation: sectionReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Monk idle - gentle breathing float */
+.monk-idle {
+  animation: monkBreathe 4s ease-in-out infinite;
+}
+
+@keyframes monkBreathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Monk thinking - slow side rock */
+.monk-thinking {
+  animation: monkThink 2.4s ease-in-out infinite;
+}
+
+@keyframes monkThink {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(-2px);
+  }
+  25% {
+    transform: rotate(-3deg) translateY(-2px);
+  }
+  75% {
+    transform: rotate(3deg) translateY(-2px);
+  }
+}
+
+/* Monk speaking - light bounce */
+.monk-speaking {
+  animation: monkSpeak 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes monkSpeak {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-4px);
+  }
+}
+
+/* Monk greeting - bow nod */
+.monk-greeting {
+  animation: monkGreet 1s ease-in-out 1 forwards;
+}
+
+@keyframes monkGreet {
+  0% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(8deg) translateY(6px);
+  }
+  60% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.voice-avatar-speaking {
+  animation: voiceAvatarSpeak 1.6s ease-in-out infinite;
+}
+
+@keyframes voiceAvatarSpeak {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(200, 169, 110, 0.08);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 12px rgba(200, 169, 110, 0.16);
+  }
+}
+
+.dedication-glow {
+  animation: dedicationGlow 3.6s ease-in-out infinite;
+}
+
+@keyframes dedicationGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(200, 169, 110, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 32px 4px rgba(200, 169, 110, 0.15);
+  }
+}
+
+.dharma-wheel-spin {
+  animation: dharmaWheelSpin 30s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes dharmaWheelSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.home-particle {
+  position: absolute;
+  bottom: -24px;
+  border-radius: 9999px;
+  background-color: rgba(200, 169, 110, 0.25);
+  pointer-events: none;
+  animation-name: homeParticleRise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes homeParticleRise {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-115vh);
+    opacity: 0;
+  }
+}
+
+.home-reveal-hidden {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+.home-reveal-visible {
+  animation: sectionReveal 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sacred-home {
+  background:
+    radial-gradient(circle at 50% 100%, rgba(80, 80, 80, 0.05) 0%, transparent 45%),
+    linear-gradient(180deg, rgba(22, 22, 22, 0.85) 0%, #1a1a1a 100%);
+}
+
+.sacred-mountains {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 220px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.07;
+  background:
+    radial-gradient(ellipse at 18% 100%, #666 0%, transparent 58%),
+    radial-gradient(ellipse at 50% 105%, #666 0%, transparent 64%),
+    radial-gradient(ellipse at 80% 100%, #666 0%, transparent 58%);
+}
+
+.sacred-wheel-spin {
+  animation: sacredWheelSpin 60s linear infinite;
+}
+
+@keyframes sacredWheelSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sacred-reveal {
+  opacity: 0;
+  animation: sacredReveal 0.9s ease forwards;
+}
+
+.sacred-delay-1 { animation-delay: 0.05s; }
+.sacred-delay-2 { animation-delay: 0.25s; }
+.sacred-delay-3 { animation-delay: 0.45s; }
+.sacred-delay-4 { animation-delay: 0.65s; }
+
+@keyframes sacredReveal {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sacred-teaching-card {
+  background-color: #2a2a2a;
+  border: 1px solid #c8a96e;
+  outline: 1px solid rgba(200, 169, 110, 0.3);
+  outline-offset: -6px;
+  position: relative;
+}
+
+.sacred-tag,
+.sacred-tag-mobile {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 999px;
+  padding: 8px 16px;
+  color: #a8a49c;
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.sacred-tag:hover,
+.sacred-tag-mobile:hover {
+  border-color: #c8a96e;
+  color: #e8d5a8;
+}
+
+.sacred-tag-inline {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 999px;
+  padding: 8px 16px;
+  color: #a8a49c;
+  font-size: 0.8rem;
+  line-height: 1;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  animation: sacredTagFloat 3.8s ease-in-out infinite;
+  position: relative;
+  z-index: 4;
+}
+
+.sacred-tag-inline:hover {
+  border-color: #c8a96e;
+  color: #e8d5a8;
+}
+
+@keyframes sacredTagFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.sacred-path-card {
+  background: linear-gradient(160deg, #2a2a2a 0%, #302a20 100%);
+  border: 1px solid #3a3a3a;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sacred-path-card:hover {
+  transform: translateY(-4px);
+  border-color: #c8a96e;
+  box-shadow: 0 6px 24px rgba(200, 169, 110, 0.14);
+}
+
+.sacred-path-card::before,
+.sacred-path-card::after,
+.sacred-path-card-inner::before,
+.sacred-path-card-inner::after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: rgba(200, 169, 110, 0.5);
+  pointer-events: none;
+}
+
+.sacred-path-card::before {
+  top: 6px;
+  left: 6px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.sacred-path-card::after {
+  top: 6px;
+  right: 6px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+}
+
+.sacred-path-card-inner::before {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+}
+
+.sacred-path-card-inner::after {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+@media (max-width: 767px) {
+  .sacred-tag-inline {
+    animation: none;
   }
 }

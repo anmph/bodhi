@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bodhi — AI-Powered Buddhist Practice Companion
+
+A calm, intelligent companion that helps people learn Buddhist teachings, build daily practice, and find grounded support.
+
+## Features
+
+- Agentic AI chat with Claude
+- RAG scripture retrieval
+- Web search integration
+- Reddit community analytics
+- Personalized learning paths
+- Scripture library
+- Prayer wall
+- Animated monk character
+
+## Tech Stack
+
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- Anthropic Claude API
+- Tavily Search API
+- Python for data analysis
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd <repo-folder>/bodhi
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create `.env.local` in `bodhi/`:
+   ```env
+   ANTHROPIC_API_KEY=your_key_here
+   TAVILY_API_KEY=your_key_here
+   ```
+4. Run the app:
+   ```bash
+   npm run dev
+   ```
+
+Open `http://localhost:3000`.
+
+## Data Analysis
+
+Reddit data tooling is located in `/scripts/` (repository root).
+
+- `scripts/reddit_scraper.py`
+  - Fetches posts from:
+    - `r/Buddhism`
+    - `r/Meditation`
+    - `r/zenbuddhism`
+    - `r/theravada`
+  - Saves to `data/reddit_posts.json`.
+- `scripts/analyze_posts.py`
+  - Uses Claude to classify topic + sentiment in batches
+  - Outputs:
+    - `data/topic_analysis.json`
+    - `data/sentiment_analysis.json`
+    - `data/summary_stats.json`
+
+Example run (from repository root):
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pip install -r requirements.txt
+python scripts/reddit_scraper.py --posts-per-subreddit 500
+python scripts/analyze_posts.py
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `ANTHROPIC_API_KEY` in your environment before running `analyze_posts.py`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+bodhi/
+  src/
+    app/
+      page.tsx              # Landing page
+      chat/                 # Chat interface
+      scriptures/           # Scripture library + reader route
+      prayers/              # Prayers page
+      dashboard/            # Practice dashboard
+      insights/             # Analytics insights page
+      api/
+        chat/route.ts       # Claude orchestration endpoint
+    components/             # Shared UI components
+    lib/                    # Prompts, tools, retrieval, constants
+    data/                   # Static analytics JSON used by UI
+scripts/                    # Reddit scraping + analysis scripts
+data/                       # Generated analysis outputs
+```

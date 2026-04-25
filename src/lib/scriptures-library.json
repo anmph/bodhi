@@ -1,0 +1,670 @@
+[
+  {
+    "id": "dhammapada",
+    "title": "Dhammapada",
+    "tradition": "Theravada",
+    "origin": "Pali Canon, ~3rd century BCE",
+    "tagline": "The Buddha's essential teachings on the path to liberation, in 423 memorable verses.",
+    "icon": "📿",
+    "sections": [
+      {
+        "heading": "Chapter 1: The Twin Verses (Yamakavagga)",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Mind is the forerunner of all actions. All deeds are led by mind, created by mind. If one speaks or acts with a corrupt mind, suffering follows, as the wheel follows the hoof of the ox that draws the cart."
+          },
+          {
+            "number": "2",
+            "text": "Mind is the forerunner of all actions. All deeds are led by mind, created by mind. If one speaks or acts with a serene mind, happiness follows, as surely as one's shadow."
+          },
+          {
+            "number": "3",
+            "text": "\"He abused me, he struck me, he defeated me, he robbed me\" — in those who harbor such thoughts, hatred will never cease."
+          },
+          {
+            "number": "4",
+            "text": "\"He abused me, he struck me, he defeated me, he robbed me\" — in those who do not harbor such thoughts, hatred will surely cease."
+          },
+          {
+            "number": "5",
+            "text": "Hatred is never appeased by hatred in this world. By non-hatred alone is hatred appeased. This is an eternal law."
+          },
+          {
+            "number": "6",
+            "text": "There are those who do not realize that one day we all must die. But those who do realize this settle their quarrels peacefully."
+          },
+          {
+            "number": "7",
+            "text": "Whoever lives contemplating pleasant things, with senses unrestrained, in food immoderate, indolent, inactive — that one Mara surely overthrows, as the wind throws down a feeble tree."
+          },
+          {
+            "number": "8",
+            "text": "Whoever lives contemplating the impurities of the body, with senses well-restrained, in food moderate, full of faith, full of sustained energy — that one Mara will never overthrow, any more than the wind throws down a rocky mountain."
+          },
+          {
+            "number": "9",
+            "text": "Whoever, being depraved, devoid of self-control and truthfulness, should don the monk's yellow robe, is surely not deserving of the robe."
+          },
+          {
+            "number": "10",
+            "text": "But whoever is purged of depravity, well-established in virtues, and filled with self-control and truthfulness, that one is indeed deserving of the yellow robe."
+          },
+          {
+            "number": "11",
+            "text": "Those who mistake the unessential to be essential, and the essential to be unessential, dwelling in wrong thoughts, never arrive at the essential."
+          },
+          {
+            "number": "12",
+            "text": "Those who know the essential to be essential and the unessential to be unessential, dwelling in right thoughts, do arrive at the essential."
+          }
+        ]
+      },
+      {
+        "heading": "Chapter 2: Heedfulness (Appamadavagga)",
+        "verses": [
+          {
+            "number": "21",
+            "text": "Heedfulness is the path to the deathless. Heedlessness is the path to death. The heedful do not die. The heedless are as if already dead."
+          },
+          {
+            "number": "22",
+            "text": "Clearly understanding this excellence of heedfulness, the wise exult therein and enjoy the resort of the noble ones."
+          },
+          {
+            "number": "23",
+            "text": "The wise ones, ever meditative and steadfastly persevering, alone experience nibbana, the incomparable freedom from bondage."
+          },
+          {
+            "number": "24",
+            "text": "Ever grows the glory of one who is energetic, mindful, pure in deed, considerate, self-restrained, who lives the Dhamma, and who is heedful."
+          },
+          {
+            "number": "25",
+            "text": "By effort and heedfulness, discipline and self-mastery, let the wise one make for himself an island which no flood can overwhelm."
+          },
+          {
+            "number": "26",
+            "text": "The foolish and ignorant indulge in heedlessness, but the wise one keeps heedfulness as his best treasure."
+          },
+          {
+            "number": "27",
+            "text": "Do not give way to heedlessness. Do not indulge in sensual pleasures. Only the heedful and meditative attain great happiness."
+          },
+          {
+            "number": "28",
+            "text": "Just as one upon the summit of a mountain beholds the groundlings, even so when the wise one ascends the high tower of wisdom, this sorrowless sage beholds the sorrowing and foolish multitude."
+          },
+          {
+            "number": "29",
+            "text": "Heedful among the heedless, wide-awake among the sleepy, the wise one advances like a swift horse, leaving behind the weak jade."
+          },
+          {
+            "number": "30",
+            "text": "By heedfulness did Indra become the overlord of the gods. Heedfulness is ever praised, and heedlessness is ever despised."
+          }
+        ]
+      },
+      {
+        "heading": "Chapter 3: The Mind (Cittavagga)",
+        "verses": [
+          {
+            "number": "33",
+            "text": "The flickering, fickle mind, difficult to guard, difficult to control — the wise one straightens it, as a fletcher straightens an arrow."
+          },
+          {
+            "number": "34",
+            "text": "Like a fish that is drawn from its watery home and thrown upon the dry ground, this mind quivers all over in its effort to escape the dominion of Mara, the tempter."
+          },
+          {
+            "number": "35",
+            "text": "Wonderful it is to tame the mind, so difficult to tame, ever swift, and seizing whatever it desires. A tamed mind brings happiness."
+          },
+          {
+            "number": "36",
+            "text": "Let the wise one guard the mind, so difficult to detect and extremely subtle, seizing whatever it desires. A guarded mind brings happiness."
+          },
+          {
+            "number": "37",
+            "text": "Dwelling in the cave of the heart, the mind, without form, wanders far and alone. Those who subdue this mind are liberated from the bonds of Mara."
+          },
+          {
+            "number": "38",
+            "text": "For one whose mind is not steadfast, who knows not the true doctrine, whose confidence wavers — the wisdom of such a one will never be perfect."
+          },
+          {
+            "number": "39",
+            "text": "For one whose mind is not soaked by lust, who is not afflicted in thought, who has abandoned both merit and demerit — for such a wakeful one there is no fear."
+          },
+          {
+            "number": "40",
+            "text": "Realizing that this body is as fragile as a clay jar, and fortifying the mind like a well-fortified city, one should battle Mara with the weapon of wisdom. One should guard what has been won, without clinging."
+          },
+          {
+            "number": "41",
+            "text": "Before long, alas, this body will lie upon the earth, unheeded, without consciousness, like a useless log cast aside."
+          },
+          {
+            "number": "42",
+            "text": "Whatever harm an enemy may do to an enemy, or a hater to a hater, a wrongly directed mind will do one far greater harm."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "heart-sutra",
+    "title": "Heart Sutra",
+    "tradition": "Mahayana",
+    "origin": "Prajnaparamita literature, ~1st century CE",
+    "tagline": "The essence of the Perfection of Wisdom — form is emptiness, emptiness is form.",
+    "icon": "💎",
+    "sections": [
+      {
+        "heading": "The Heart of the Perfection of Wisdom",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Thus have I heard. At one time the Blessed One was dwelling in Rajagriha at Vulture Peak Mountain, together with a great gathering of the sangha of monks and a great gathering of the sangha of bodhisattvas."
+          },
+          {
+            "number": "2",
+            "text": "At that time the Blessed One entered the samadhi that expresses the dharma called Profound Illumination, and at the same time noble Avalokiteshvara, the bodhisattva mahasattva, while practicing the profound perfection of wisdom, saw in this way: he saw the five aggregates to be empty of nature."
+          },
+          {
+            "number": "3",
+            "text": "Then, through the power of the Buddha, venerable Shariputra said to noble Avalokiteshvara, the bodhisattva mahasattva: \"How should a son or daughter of noble family train, who wishes to practice the profound perfection of wisdom?\""
+          },
+          {
+            "number": "4",
+            "text": "Avalokiteshvara, the bodhisattva mahasattva, said to venerable Shariputra: \"O Shariputra, a son or daughter of noble family who wishes to practice the profound perfection of wisdom should see in this way: seeing the five aggregates to be empty of nature.\""
+          },
+          {
+            "number": "5",
+            "text": "\"Form is emptiness; emptiness also is form. Emptiness is no other than form; form is no other than emptiness. In the same way, feeling, perception, formation, and consciousness are emptiness.\""
+          },
+          {
+            "number": "6",
+            "text": "\"Thus, Shariputra, all dharmas are emptiness. There are no characteristics. There is no birth and no cessation. There is no impurity and no purity. There is no decrease and no increase.\""
+          },
+          {
+            "number": "7",
+            "text": "\"Therefore, Shariputra, in emptiness there is no form, no feeling, no perception, no formation, no consciousness; no eye, no ear, no nose, no tongue, no body, no mind; no appearance, no sound, no smell, no taste, no touch, no dharmas.\""
+          },
+          {
+            "number": "8",
+            "text": "\"There is no eye element up to no mind consciousness element. There is no ignorance, no end of ignorance up to no old age and death, no end of old age and death.\""
+          },
+          {
+            "number": "9",
+            "text": "\"There is no suffering, no origin of suffering, no cessation of suffering, no path, no wisdom, no attainment, and no non-attainment.\""
+          },
+          {
+            "number": "10",
+            "text": "\"Therefore, Shariputra, since the bodhisattvas have no attainment, they abide by means of the perfection of wisdom. Since there is no obscuration of mind, there is no fear. They transcend falsity and attain complete nirvana.\""
+          },
+          {
+            "number": "11",
+            "text": "\"All the buddhas of the three times, by means of the perfection of wisdom, fully awaken to unsurpassable, true, complete enlightenment.\""
+          },
+          {
+            "number": "12",
+            "text": "\"Therefore, the great mantra of the perfection of wisdom, the mantra of great insight, the unsurpassed mantra, the unequaled mantra, the mantra that calms all suffering, should be known as truth, since there is no deception.\""
+          },
+          {
+            "number": "13",
+            "text": "\"The perfection of wisdom mantra is said in this way: Gate gate paragate parasamgate bodhi svaha. Gone, gone, gone beyond, gone completely beyond — awakening! So be it.\""
+          },
+          {
+            "number": "14",
+            "text": "Then the Blessed One arose from that samadhi and praised noble Avalokiteshvara, the bodhisattva mahasattva, saying: \"Good, good, O son of noble family; thus it is, O son of noble family, thus it is. One should practice the profound perfection of wisdom just as you have taught, and all the tathagatas will rejoice.\""
+          },
+          {
+            "number": "15",
+            "text": "When the Blessed One had said this, venerable Shariputra and noble Avalokiteshvara, the bodhisattva mahasattva, and the whole assembly and the world with its gods, humans, asuras, and gandharvas rejoiced and praised the words of the Blessed One."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "diamond-sutra",
+    "title": "Diamond Sutra",
+    "tradition": "Mahayana",
+    "origin": "Prajnaparamita literature, ~2nd century CE",
+    "tagline": "A dialogue on the nature of perception, reality, and the perfection of wisdom.",
+    "icon": "⚡",
+    "sections": [
+      {
+        "heading": "Section 1: The Assembly",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Thus have I heard. At one time the Buddha was staying in the Jeta Grove near the city of Shravasti, together with a community of twelve hundred and fifty monks."
+          },
+          {
+            "number": "2",
+            "text": "One day, at mealtime, the World-Honored One put on his robe and, carrying his bowl, went into the great city of Shravasti to beg for food, going from house to house."
+          },
+          {
+            "number": "3",
+            "text": "When he had finished eating, he put away his robe and bowl, washed his feet, arranged his seat, and sat down."
+          }
+        ]
+      },
+      {
+        "heading": "Section 2: Subhuti's Request",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Then the elder Subhuti, who was among the assembly, rose from his seat, bared his right shoulder, knelt upon his right knee, and with palms joined respectfully, addressed the Buddha: \"World-Honored One, it is most rare and wonderful how well the Tathagata protects and is mindful of all bodhisattvas, and how well he instructs them.\""
+          },
+          {
+            "number": "2",
+            "text": "\"World-Honored One, if good men and good women seek the supreme awakening, upon what should they rely, and how should they subdue their thoughts?\""
+          },
+          {
+            "number": "3",
+            "text": "The Buddha said: \"Very good, Subhuti! It is just as you say. The Tathagata is well-mindful of all bodhisattvas and well instructs them. Now listen carefully and I shall tell you. Good men and good women who seek the supreme awakening should thus subdue their thoughts.\""
+          },
+          {
+            "number": "4",
+            "text": "\"Yes, World-Honored One, we eagerly wish to hear,\" replied Subhuti."
+          }
+        ]
+      },
+      {
+        "heading": "Section 3: The Bodhisattva's Vow",
+        "verses": [
+          {
+            "number": "1",
+            "text": "The Buddha said to Subhuti: \"All the bodhisattva-mahasattvas should subdue their thoughts in the following manner: Of all sentient beings — whether born from eggs, from wombs, from moisture, or by transformation; whether with form or without form; whether with thought or without thought, or with neither thought nor non-thought — I cause them all to enter nirvana without remainder, and so liberate them.\""
+          },
+          {
+            "number": "2",
+            "text": "\"Yet when vast, uncountable, immeasurable numbers of beings have thus been liberated, truly no being has been liberated. Why is this so, Subhuti? If a bodhisattva holds to the notion of a self, a person, a sentient being, or a life span, that one is not a true bodhisattva.\""
+          },
+          {
+            "number": "3",
+            "text": "\"Furthermore, Subhuti, a bodhisattva who practices generosity should not dwell in any object when practicing generosity. That is to say, one should give without dwelling in forms, without dwelling in sounds, smells, tastes, tactile objects, or mental objects. Subhuti, a bodhisattva should give without dwelling in any notion of a sign.\""
+          },
+          {
+            "number": "4",
+            "text": "\"Why is this? If a bodhisattva practices generosity without dwelling in any sign, the merit of that act is not something that can be conceived or measured. Subhuti, what do you think? Can one measure all of space in the eastern direction?\" \"No, World-Honored One.\" \"Subhuti, can one measure space in the southern, western, or northern directions, or in any of the four intermediate directions, or above, or below?\" \"No, World-Honored One.\" \"Subhuti, the merit of a bodhisattva who gives without dwelling in signs is just as inconceivable as that.\""
+          }
+        ]
+      },
+      {
+        "heading": "Section 5: Seeing Through Appearances",
+        "verses": [
+          {
+            "number": "1",
+            "text": "\"Subhuti, what do you think? Can the Tathagata be recognized by means of bodily form?\" \"No, World-Honored One. The Tathagata cannot be recognized by means of bodily form. Why? Because what the Tathagata calls bodily form is not truly bodily form.\""
+          },
+          {
+            "number": "2",
+            "text": "The Buddha said to Subhuti: \"All that has form is illusive and unreal. When you see that all forms are illusory and unreal, then you will begin to perceive your true Buddha nature.\""
+          },
+          {
+            "number": "3",
+            "text": "\"Wherever there is form, there is delusion. If you can see that all forms are non-forms, then you see the Tathagata.\""
+          }
+        ]
+      },
+      {
+        "heading": "Section 10: Setting Forth the Pure Land",
+        "verses": [
+          {
+            "number": "1",
+            "text": "The Buddha asked Subhuti: \"In ancient times, when the Tathagata was with Dipankara Buddha, did he attain anything in the teaching?\" \"No, World-Honored One. When the Tathagata was with Dipankara Buddha, in truth there was nothing attained in the teaching.\""
+          },
+          {
+            "number": "2",
+            "text": "\"Subhuti, what do you think? Does a bodhisattva adorn the Buddha lands?\" \"No, World-Honored One. Why? Because adorning the Buddha lands is not truly adorning; it is merely called adorning.\""
+          },
+          {
+            "number": "3",
+            "text": "\"Therefore, Subhuti, all bodhisattva-mahasattvas should give rise to a pure and clear mind that does not dwell in form, sound, smell, taste, touch, or mental objects. They should give rise to a mind that does not dwell anywhere.\""
+          },
+          {
+            "number": "4",
+            "text": "\"Subhuti, if a person had a body as great as Mount Sumeru, what do you think — would that body be great?\" Subhuti said: \"Very great, World-Honored One. Why? Because the Buddha teaches that what is called a great body is not truly a great body. That is what is called a great body.\""
+          }
+        ]
+      },
+      {
+        "heading": "Section 17: No Self, No Concept",
+        "verses": [
+          {
+            "number": "1",
+            "text": "At that time Subhuti asked the Buddha: \"World-Honored One, if good men and good women seek the supreme awakening, how should they abide and how should they master their thoughts?\" The Buddha told Subhuti: \"Good men and good women who seek the supreme awakening should give rise to this thought: I should liberate all sentient beings, yet when all sentient beings have been liberated, in truth no sentient being has been liberated.\""
+          },
+          {
+            "number": "2",
+            "text": "\"Why is this so? Subhuti, if a bodhisattva holds to the notion of a self, a person, a sentient being, or a life span, then that one is not a bodhisattva. Why? Subhuti, in reality there is no such thing as the supreme awakening.\""
+          },
+          {
+            "number": "3",
+            "text": "\"Subhuti, what do you think? When the Tathagata was with Dipankara Buddha, was there any attainment of the supreme awakening?\" \"No, World-Honored One. As I understand the meaning of the Buddha's teaching, when the Buddha was with Dipankara Buddha there was no attainment of the supreme awakening.\""
+          },
+          {
+            "number": "4",
+            "text": "The Buddha said: \"Just so, just so. Subhuti, in truth there is no such thing as the supreme awakening. Subhuti, if there were, Dipankara Buddha would not have given me the prediction: 'In your next life you shall become a buddha called Shakyamuni.' It is precisely because there is no fixed dharma called the supreme awakening that Dipankara Buddha gave me this prediction.\""
+          },
+          {
+            "number": "5",
+            "text": "\"Why is this? The one called Tathagata is the suchness of all dharmas. If someone were to say the Tathagata has attained the supreme awakening, Subhuti, there is in truth no dharma by which the Buddha has attained the supreme awakening. The supreme awakening attained by the Tathagata is neither real nor unreal.\""
+          }
+        ]
+      },
+      {
+        "heading": "Section 32: The Teaching",
+        "verses": [
+          {
+            "number": "1",
+            "text": "\"Subhuti, if someone were to fill the three thousand great thousand worlds with the seven precious treasures and give them all as a gift, the merit gained by this person would not equal that of one who receives, upholds, studies, and recites even a four-line verse of this teaching and explains it to others.\""
+          },
+          {
+            "number": "2",
+            "text": "\"How should it be explained to others? By not grasping at any appearance, by remaining unmoved by appearances, by abiding in the suchness of things. Why is this?\""
+          },
+          {
+            "number": "3",
+            "text": "\"All conditioned phenomena are like a dream, like an illusion, like a bubble, like a shadow, like a dewdrop, like a flash of lightning. One should contemplate them in this way.\""
+          },
+          {
+            "number": "4",
+            "text": "When the Buddha finished this discourse, the elder Subhuti, together with the monks, nuns, laymen, laywomen, and all the beings of the world — the gods, humans, and asuras — having heard what the Buddha had said, were filled with great joy, accepted it with faith, and put it into practice."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "platform-sutra",
+    "title": "Platform Sutra of the Sixth Patriarch",
+    "tradition": "Zen",
+    "origin": "Attributed to Huineng, ~8th century CE",
+    "tagline": "The Sixth Patriarch's revolutionary teaching on sudden awakening and original nature.",
+    "icon": "🪷",
+    "sections": [
+      {
+        "heading": "Autobiography",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Good friends, purify your minds and concentrate on the teaching of the great perfection of wisdom. The Great Master stopped speaking and quieted his own mind. After a good while he said: Good friends, please listen. My father was originally from Fanyang. He was banished to Lingnan and became a commoner in Xinzhou. My father died when I was young, and my aged mother and I, her only son, moved to Nanhai. We suffered extreme poverty, and I sold firewood in the marketplace."
+          },
+          {
+            "number": "2",
+            "text": "By chance a man bought some firewood and had me deliver it to his shop. After he received it and I was paid, as I went out the door I saw a man reciting a sutra. When I heard the words of this sutra, my mind immediately became clear and I was awakened. I asked him: \"What sutra are you reciting?\" He answered: \"The Diamond Sutra.\" I then asked: \"Where do you come from, and why do you recite this sutra?\" He said: \"I come from the East Meditation Monastery in Huangmei district. The Fifth Patriarch, Hongren, is the master there, with over a thousand disciples.\""
+          },
+          {
+            "number": "3",
+            "text": "I then traveled to Huangmei and called on the Fifth Patriarch. The Patriarch asked me: \"Where are you from, and what do you seek?\" I answered: \"Your disciple is a commoner from Lingnan, from Xinzhou. I have come a great distance to pay homage to you, and I seek nothing other than buddhahood.\" The Patriarch said: \"You are from Lingnan and, furthermore, you are a barbarian. How can you become a buddha?\" I replied: \"Although people exist as northerners and southerners, the buddha-nature fundamentally has no north or south. The body of a barbarian and that of a monk are not the same, but what difference is there in our buddha-nature?\""
+          },
+          {
+            "number": "4",
+            "text": "The Fifth Patriarch wished to have the assembly write verses so he could see their understanding. He said: \"If anyone comprehends the great meaning, he shall receive the robe and the Dharma and become the Sixth Patriarch.\" The head monk Shenxiu wrote on the corridor wall: \"The body is the bodhi tree, the mind is like a bright mirror's stand. At all times we must strive to polish it, and must not let dust collect.\""
+          },
+          {
+            "number": "5",
+            "text": "I, Huineng, also composed a verse and asked someone who could write to post it on the west corridor wall, so that I might offer what my original mind had to say. If you do not know the original mind, learning the Dharma is to no avail. If you know the mind and see its true nature, you then awaken to the great meaning. My verse said: \"Bodhi originally has no tree. The bright mirror also has no stand. Fundamentally there is not a single thing — where could dust arise?\""
+          },
+          {
+            "number": "6",
+            "text": "The Fifth Patriarch knew that I had a splendid understanding of the highest meaning. Fearing that others might harm me, he came to me at midnight in the threshing room, where I was pounding rice. He taught me the Diamond Sutra, and when he came to the passage \"Give rise to a mind that does not dwell anywhere,\" I was at once greatly enlightened, and realized that all the myriad dharmas are not separate from one's own nature. The Patriarch then transmitted the Dharma and the robe to me, saying: \"You are now the Sixth Patriarch. Guard this teaching well and do not let it come to an end. Depart now — go south and hide, for danger is near.\""
+          }
+        ]
+      },
+      {
+        "heading": "On Prajna",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Good friends, the wisdom of enlightenment and prajna are inherently possessed by all people of the world. It is only because the mind is deluded that people cannot attain realization by themselves. They must seek the help of a good and wise teacher to see into their own nature. Good friends, in the moment of a single thought of enlightenment, all sentient beings become buddhas."
+          },
+          {
+            "number": "2",
+            "text": "Good friends, prajna is the wisdom of enlightenment. If at all times your every thought contains no ignorance, and you always act with wisdom, then this is the practice of prajna. With a single foolish thought, prajna is cut off. With a single wise thought, prajna is born. People in the world are deluded and cannot see prajna. They speak of it with their mouths but their minds remain ignorant. It is like someone who always talks about food but never eats — even after ten thousand years, that person would never be satisfied."
+          },
+          {
+            "number": "3",
+            "text": "Good friends, maha-prajna-paramita is a Sanskrit word that means \"great wisdom to reach the other shore.\" This must be practiced in the mind and not merely recited in words. Reciting it without practicing it is like a phantom, an illusion, a dewdrop, a flash of lightning. When recitation and practice correspond to each other, your own dharma body is the buddha."
+          },
+          {
+            "number": "4",
+            "text": "What is maha? Maha means great. The capacity of the mind is vast and great like empty space. It has no boundaries, no square or round, no great or small, no blue or yellow, no red or white, no above or below, no long or short, no anger or joy, no right or wrong, no good or evil, no first or last. The buddha lands are all the same as empty space."
+          },
+          {
+            "number": "5",
+            "text": "Good friends, do not listen to my explanation of emptiness and then attach to emptiness. If you sit still with an empty mind, you are attached to undifferentiated emptiness. Good friends, the emptiness of the universe can contain the forms and shapes of the ten thousand things: the sun, moon, and stars; the mountains, rivers, and streams; the grasses, trees, and forests; good people and bad people; good dharmas and bad dharmas; heavens and hells. All of these are within emptiness. The emptiness of people's nature is just like this."
+          }
+        ]
+      },
+      {
+        "heading": "On Meditation and Wisdom",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Good friends, in my teaching, meditation and wisdom are the foundation. But do not be under the mistaken impression that meditation and wisdom are different. Meditation and wisdom are of one essence, not two. Meditation is the essence of wisdom, and wisdom is the function of meditation. At the very moment of wisdom, meditation exists in that wisdom. At the very moment of meditation, wisdom exists in that meditation."
+          },
+          {
+            "number": "2",
+            "text": "Good friends, this means that meditation and wisdom are alike. Students of the Way, take heed: do not say that meditation gives rise to wisdom, or that wisdom gives rise to meditation, or that meditation and wisdom are different from each other. To hold this view implies that dharmas possess duality."
+          },
+          {
+            "number": "3",
+            "text": "If the mouth speaks good words but the mind has bad thoughts, then meditation and wisdom are useless because they are not equal. If mind and mouth are both good, and the inner and the outer are one, then meditation and wisdom are equal."
+          },
+          {
+            "number": "4",
+            "text": "The practice of self-awakening does not consist of arguing. If you argue about which comes first, meditation or wisdom, you are like a deluded person. Without settling the argument you will give rise to notions of winner and loser and will not abandon the idea of a self and of dharmas."
+          },
+          {
+            "number": "5",
+            "text": "Good friends, what are meditation and wisdom like? They are like a lamp and its light. If there is a lamp, there is light. If there is no lamp, there is darkness. The lamp is the essence of the light, and the light is the function of the lamp. Although they have two names, their fundamental nature is one. Meditation and wisdom are just like this."
+          }
+        ]
+      },
+      {
+        "heading": "On No-Thought",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Good friends, in this teaching of mine, from ancient times up to the present, all have set up no-thought as the main doctrine, non-form as the substance, and non-abiding as the basis. Non-form is to be separated from form even when associated with form. No-thought is not to think even when involved in thought. Non-abiding is the original nature of humankind."
+          },
+          {
+            "number": "2",
+            "text": "In regard to all things, thought after thought does not attach. If your one thought attaches, then successive thoughts attach — this is called being fettered. If in regard to all dharmas your successive thoughts do not attach, then you are unfettered. Therefore, non-abiding is made the basis."
+          },
+          {
+            "number": "3",
+            "text": "Good friends, being outwardly separated from all forms, this is non-form. When you are separated from form, the substance of your nature is pure. Therefore, non-form is made the substance."
+          },
+          {
+            "number": "4",
+            "text": "Good friends, no-thought means: even when involved in thought, you do not think of the myriad things. Not that you drive away thoughts — if you stop all thoughts, you die and are reborn elsewhere. Students of the Way, take heed! Do not fail to understand the meaning of the dharma. If you yourself are deluded, that is bad enough; how much worse to encourage others in their delusions! Not only does the deluded person not realize he is deluded, but he slanders the sutras and the dharma."
+          },
+          {
+            "number": "5",
+            "text": "Good friends, why is no-thought established as the main doctrine? It is because deluded people think in terms of objects, and from these thoughts wrong views arise. All afflictions and false thinking arise from this. However, this school establishes no-thought as its doctrine. People of the world, separate yourselves from views! Do not give rise to thoughts based on views. If there were no thinking at all, no-thought would have no place to exist."
+          },
+          {
+            "number": "6",
+            "text": "The self-nature of suchness gives rise to thought. Even though the eye, ear, nose, and tongue perceive forms, sounds, smells, and tastes, the self-nature is not stained. This original nature is forever free and pure, and the myriad dharmas are within your self-nature. If you think of the myriad things with an evil mind, you will practice evil. If you think of the myriad things with a good mind, you will practice good. Thus it is clear that all dharmas exist within your own mind. Your own mind is itself the buddha."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "metta-sutta",
+    "title": "Metta Sutta",
+    "tradition": "Theravada",
+    "origin": "Sutta Nipata 1.8, Pali Canon",
+    "tagline": "The Buddha's discourse on universal loving-kindness — a practice of boundless goodwill.",
+    "icon": "💛",
+    "sections": [
+      {
+        "heading": "The Discourse on Loving-Kindness",
+        "verses": [
+          {
+            "number": "1",
+            "text": "This is what should be done by one who is skilled in goodness, and who knows the path of peace: let them be able and upright, straightforward and gentle in speech, humble and not conceited."
+          },
+          {
+            "number": "2",
+            "text": "Contented and easily satisfied, unburdened with duties and frugal in their ways, peaceful and calm, and wise and skillful, not proud or demanding in nature."
+          },
+          {
+            "number": "3",
+            "text": "Let them not do the slightest thing that the wise would later reprove. Wishing: in gladness and in safety, may all beings be at ease."
+          },
+          {
+            "number": "4",
+            "text": "Whatever living beings there may be — whether they are weak or strong, omitting none, the great or the mighty, medium, short, or small, the seen and the unseen."
+          },
+          {
+            "number": "5",
+            "text": "Those living near and far away, those born and to be born — may all beings be at ease."
+          },
+          {
+            "number": "6",
+            "text": "Let none deceive another, or despise any being in any state. Let none through anger or ill-will wish harm upon another."
+          },
+          {
+            "number": "7",
+            "text": "Even as a mother protects with her life her child, her only child, so with a boundless heart should one cherish all living beings."
+          },
+          {
+            "number": "8",
+            "text": "Radiating kindness over the entire world: spreading upwards to the skies, and downwards to the depths, outwards and unbounded, freed from hatred and ill-will."
+          },
+          {
+            "number": "9",
+            "text": "Whether standing or walking, seated or lying down, free from drowsiness, one should sustain this recollection. This is said to be the sublime abiding."
+          },
+          {
+            "number": "10",
+            "text": "By not holding to fixed views, the pure-hearted one, having clarity of vision, being freed from all sense-desires, is not born again into this world."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "song-of-mahamudra",
+    "title": "Song of Mahamudra",
+    "tradition": "Tibetan",
+    "origin": "Tilopa, ~10th century CE",
+    "tagline": "Tilopa's oral instructions to Naropa on the nature of mind — direct and uncompromising.",
+    "icon": "🏔",
+    "sections": [
+      {
+        "heading": "The Nature of Mahamudra",
+        "verses": [
+          {
+            "number": "1",
+            "text": "Mahamudra cannot be taught, but most intelligent Naropa, since you have undergone rigorous austerity, with forbearance in suffering and devotion to your guru, blessed one, take this to heart."
+          },
+          {
+            "number": "2",
+            "text": "Look at the nature of the world: nothing lasts, nothing is real, all is like a dream and an illusion. Dream and illusion — even these are meaningless. Therefore, give up the ways of the world and renounce all desire."
+          },
+          {
+            "number": "3",
+            "text": "Cut off all attachment to friends, to kin, to country. Meditate alone in the forests, in retreats, in mountain caves. Remain in the state of non-meditation. If you attain non-attainment, then you have attained mahamudra."
+          },
+          {
+            "number": "4",
+            "text": "The void needs no reliance; mahamudra rests on nothing. Without making an effort, but remaining loose and natural, one can break the yoke, thus gaining liberation."
+          },
+          {
+            "number": "5",
+            "text": "If you see nothing when you stare into empty space, if with the mind you then observe the mind, you destroy distinctions and reach buddhahood."
+          }
+        ]
+      },
+      {
+        "heading": "Instructions on Practice",
+        "verses": [
+          {
+            "number": "1",
+            "text": "The clouds that wander through the sky have no roots, no home; nor do the distinctive thoughts floating through the mind. Once the self-mind is seen, discrimination stops."
+          },
+          {
+            "number": "2",
+            "text": "In space, shapes and colors form, but neither by black nor by white is space tinged. From the self-mind all things emerge; the mind by virtues and by vices is not stained."
+          },
+          {
+            "number": "3",
+            "text": "Do not imagine, do not think, do not analyze, do not meditate, do not reflect. Keep the mind in its natural state."
+          },
+          {
+            "number": "4",
+            "text": "The darkness of ages cannot shroud the glowing sun; the long ages of samsara cannot hide the splendid light of the mind. Though words are spoken to explain the void, the void as such can never be expressed."
+          },
+          {
+            "number": "5",
+            "text": "Though we say \"the mind is a bright light,\" it is beyond all words and symbols. Although the mind is void in essence, all things it embraces and contains."
+          },
+          {
+            "number": "6",
+            "text": "Do nothing with the body but relax. Shut firm the mouth and keep silent. Empty your mind and think of nothing. Like a hollow bamboo, rest at ease with your body. Giving not, nor taking, put your mind at rest. Mahamudra is like a mind that clings to nothing. Thus practicing, in time you will reach buddhahood."
+          }
+        ]
+      },
+      {
+        "heading": "The Conduct",
+        "verses": [
+          {
+            "number": "1",
+            "text": "The practice of mantra and paramita, instruction in the sutras and precepts, and teaching from the schools and scriptures will not bring realization of the innate truth. For if the mind when filled with some desire should seek a goal, it only hides the light."
+          },
+          {
+            "number": "2",
+            "text": "One who keeps tantric precepts yet discriminates betrays the spirit of samaya. Cease all activity, abandon all desire, let thoughts rise and fall as they will, like the ocean waves. One who never harms the non-abiding, nor the principle of non-distinction, upholds the tantric precepts."
+          },
+          {
+            "number": "3",
+            "text": "One who abandons craving and clings not to this or that, perceives the real meaning given in the scriptures. In mahamudra all one's sins are burned; in mahamudra one is released from the prison of this world. This is the dharma's supreme torch."
+          },
+          {
+            "number": "4",
+            "text": "Those who are ignorant of this, and those who are not devoted, are swept along by the stream of ever-returning sorrow and suffering. Those who are ignorant and not devoted are to be pitied, for they undergo unbearable and ceaseless suffering."
+          },
+          {
+            "number": "5",
+            "text": "If you wish to free yourself from ceaseless suffering, rely upon a wise and learned guru. When the guru's blessing enters your heart, your own mind is liberated."
+          }
+        ]
+      },
+      {
+        "heading": "The Fruition",
+        "verses": [
+          {
+            "number": "1",
+            "text": "All things in this world are fleeting; all are like dreams and like magical apparitions. Dream and apparition — even these are meaningless. Therefore, give up the life of the worldling. Cut the fetters of attachment and revulsion, and meditate alone in forests and mountain retreats."
+          },
+          {
+            "number": "2",
+            "text": "When you abide in the state that is beyond meditation, if you find there is nothing to attain — then you have attained mahamudra. The tree of true devotion spreads its branches wide; the tree of mahamudra bears the fruit of great compassion."
+          },
+          {
+            "number": "3",
+            "text": "The joy that reaches beyond all pleasure, the happiness of supreme liberation — this is the great bliss of mahamudra. There is no realization beyond this. Transcending the limitations of the scholar and the monastery, this teaching comes directly from the guru to the worthy disciple."
+          },
+          {
+            "number": "4",
+            "text": "Space is beyond color and shape; it is not affected by black or white. Mind essence is beyond color and shape; it is not affected by virtues or vices. The clear light of the sun cannot be dimmed by the darkness of a thousand ages."
+          },
+          {
+            "number": "5",
+            "text": "Naropa, this supreme essence has been transmitted. The limitless clear light of the mind cannot be hidden by the darkness of samsara, not for even an age. This song of mahamudra was composed by Tilopa on the banks of the Ganges after he had given mind-transmission to Naropa and had led him through twelve great hardships."
+          }
+        ]
+      }
+    ]
+  }
+]
