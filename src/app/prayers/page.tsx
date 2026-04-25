@@ -7,50 +7,51 @@ import AuthGate from "@/components/auth/AuthGate";
 interface PrayerCard {
   id: string;
   title: string;
-  vietnamese: string;
-  english: string;
+  text: string;
 }
 
 const PRAYERS: PrayerCard[] = [
   {
-    id: "quy-y-tam-bao",
-    title: "Quy Y Tam Bao (Taking Refuge in the Three Jewels)",
-    vietnamese:
-      "Con xin quy y Phật,\nNgười chỉ đường sáng suốt cho con trong cuộc đời.\nCon xin quy y Pháp,\nCon đường của hiểu biết và thương yêu.\nCon xin quy y Tăng,\nĐoàn thể của những người nguyện sống tỉnh thức.",
-    english:
+    id: "taking-refuge",
+    title: "Taking Refuge in the Three Jewels",
+    text:
       "I take refuge in the Buddha,\nThe one who shows the path of awakening.\nI take refuge in the Dharma,\nThe path of understanding and compassion.\nI take refuge in the Sangha,\nThe community that lives in mindfulness.",
   },
   {
-    id: "sam-hoi",
-    title: "Sam Hoi (Repentance Verse)",
-    vietnamese:
-      "Bao nhiêu tội chướng trong đời,\nĐều do ba nghiệp tham sân si.\nTừ thân miệng ý phát sinh,\nNay con xin sám hối tất cả.",
-    english:
+    id: "repentance",
+    title: "Repentance Verse",
+    text:
       "All unwholesome actions I have committed,\nArising from greed, anger, and ignorance,\nBorn of body, speech, and mind,\nI now sincerely repent them all.",
   },
   {
     id: "heart-sutra-short",
-    title: "Bat Nha Tam Kinh (Heart Sutra — short)",
-    vietnamese:
-      "Quán Tự Tại Bồ Tát hành thâm Bát Nhã Ba La Mật Đa thời,\nchiếu kiến ngũ uẩn giai không, độ nhất thiết khổ ách.\nSắc tức thị không, không tức thị sắc.\nThọ tưởng hành thức, diệc phục như thị.",
-    english:
+    title: "Heart Sutra (Short Recitation)",
+    text:
       "When Avalokiteshvara practiced deeply the Perfection of Wisdom,\nhe clearly saw that the five aggregates are empty,\nand thus transcended all suffering.\nForm is emptiness, emptiness is form.\nThe same is true of feeling, perception, formations, and consciousness.",
   },
   {
-    id: "hoi-huong",
-    title: "Hoi Huong Cong Duc (Merit Dedication)",
-    vietnamese:
-      "Nguyện đem công đức này\nHướng về khắp tất cả\nĐệ tử và chúng sanh\nĐều trọn thành Phật đạo.",
-    english:
+    id: "merit-dedication",
+    title: "Merit Dedication",
+    text:
       "May this merit be shared with all beings.\nMay all beings be peaceful, joyful, and free from suffering.\nMay wisdom and compassion flourish everywhere.",
   },
   {
-    id: "ngu-gioi",
-    title: "Ngu Gioi (The Five Precepts)",
-    vietnamese:
-      "Con nguyện không sát sinh.\nCon nguyện không trộm cắp.\nCon nguyện không tà hạnh.\nCon nguyện không nói dối.\nCon nguyện không sử dụng các chất gây say nghiện.",
-    english:
+    id: "five-precepts",
+    title: "The Five Precepts",
+    text:
       "I undertake the training to refrain from taking life.\nI undertake the training to refrain from taking what is not given.\nI undertake the training to refrain from sexual misconduct.\nI undertake the training to refrain from false speech.\nI undertake the training to refrain from intoxicants that cloud the mind.",
+  },
+  {
+    id: "loving-kindness",
+    title: "Loving-Kindness Meditation",
+    text:
+      "May I be happy. May I be peaceful. May I be free from suffering.\nMay you be happy. May you be peaceful. May you be free from suffering.\nMay all beings be happy. May all beings be peaceful.\nMay all beings be free from suffering.",
+  },
+  {
+    id: "four-bodhisattva-vows",
+    title: "The Four Bodhisattva Vows",
+    text:
+      "Beings are numberless; I vow to save them.\nDesires are inexhaustible; I vow to put an end to them.\nThe dharmas are boundless; I vow to master them.\nThe Buddha way is unsurpassable; I vow to attain it.",
   },
 ];
 
@@ -132,8 +133,8 @@ function PrayersPageInner() {
           className="font-display italic text-[1.03rem] leading-[1.6]"
           style={{ color: "#A8A49C" }}
         >
-          A quiet space to return to foundational verses in Vietnamese and
-          English.
+          A quiet space to return to foundational verses and cultivate daily
+          practice.
         </p>
       </header>
 
@@ -170,42 +171,12 @@ function PrayersPageInner() {
                   className="px-4 pb-4 pt-1"
                   style={{ borderTop: "1px solid #2F2F2F" }}
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p
-                        style={{
-                          color: "#8F8A81",
-                          fontSize: "0.74rem",
-                          marginBottom: 6,
-                        }}
-                      >
-                        Vietnamese
-                      </p>
-                      <p
-                        className="font-display italic text-[1.03rem] leading-[1.9] whitespace-pre-line"
-                        style={{ color: "#E8D5A8" }}
-                      >
-                        {prayer.vietnamese}
-                      </p>
-                    </div>
-                    <div>
-                      <p
-                        style={{
-                          color: "#8F8A81",
-                          fontSize: "0.74rem",
-                          marginBottom: 6,
-                        }}
-                      >
-                        English
-                      </p>
-                      <p
-                        className="font-display italic text-[1.03rem] leading-[1.9] whitespace-pre-line"
-                        style={{ color: "#D4CFC7" }}
-                      >
-                        {prayer.english}
-                      </p>
-                    </div>
-                  </div>
+                  <p
+                    className="font-display italic text-[1.05rem] leading-[1.9] whitespace-pre-line"
+                    style={{ color: "#D4CFC7" }}
+                  >
+                    {prayer.text}
+                  </p>
                   <div className="mt-4 flex items-center gap-3 flex-wrap">
                     <button
                       type="button"

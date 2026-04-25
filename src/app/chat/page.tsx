@@ -351,6 +351,10 @@ function ChatPageInner() {
   // Shared streaming helper: POSTs to /api/chat, consumes the stream, and
   // captures the returned X-Session-Id so follow-up turns update the same
   // ChatSession record in Mongo.
+  //
+  // Includes a 25-second timeout on the initial fetch and one automatic
+  // retry so transient network blips or cold-start delays don't surface
+  // as permanent failures.
   const streamChatResponse = useCallback(
     async (
       payloadMessages: Message[],
@@ -361,55 +365,91 @@ function ChatPageInner() {
         onDelta?: (assistantSoFar: string) => void;
       }
     ): Promise<string> => {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: payloadMessages,
-          systemPrompt: options.systemPrompt,
-          sessionId: serverSessionIdRef.current ?? undefined,
-          character: options.character ?? null,
-        }),
-      });
+      const MAX_ATTEMPTS = 2;
+      const FETCH_TIMEOUT_MS = 25_000;
+      const RETRY_DELAY_MS = 1_500;
 
-      if (!res.ok) throw new Error("API error");
+      for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(
+          () => abortController.abort(),
+          FETCH_TIMEOUT_MS
+        );
 
-      const sessionIdHeader = res.headers.get("x-session-id");
-      if (sessionIdHeader) {
-        serverSessionIdRef.current = sessionIdHeader;
-      }
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: payloadMessages,
+              systemPrompt: options.systemPrompt,
+              sessionId: serverSessionIdRef.current ?? undefined,
+              character: options.character ?? null,
+            }),
+            signal: abortController.signal,
+          });
 
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error("No reader");
+          clearTimeout(timeoutId);
 
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let preambleParsed = false;
-      let assistantContent = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        if (!preambleParsed) {
-          const sep = buffer.indexOf("---STREAM---\n");
-          if (sep !== -1) {
-            buffer = buffer.slice(sep + "---STREAM---\n".length);
-            preambleParsed = true;
-            options.onStreamStart?.();
-          } else {
-            continue;
+          if (!res.ok) {
+            if (attempt < MAX_ATTEMPTS) {
+              await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+              options.onDelta?.("");
+              continue;
+            }
+            throw new Error("API error");
           }
-        }
 
-        assistantContent += buffer;
-        buffer = "";
-        options.onDelta?.(assistantContent);
+          const sessionIdHeader = res.headers.get("x-session-id");
+          if (sessionIdHeader) {
+            serverSessionIdRef.current = sessionIdHeader;
+          }
+
+          const reader = res.body?.getReader();
+          if (!reader) throw new Error("No reader");
+
+          const decoder = new TextDecoder();
+          let buffer = "";
+          let preambleParsed = false;
+          let assistantContent = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+
+            if (!preambleParsed) {
+              const sep = buffer.indexOf("---STREAM---\n");
+              if (sep !== -1) {
+                buffer = buffer.slice(sep + "---STREAM---\n".length);
+                preambleParsed = true;
+                options.onStreamStart?.();
+              } else {
+                continue;
+              }
+            }
+
+            assistantContent += buffer;
+            buffer = "";
+            options.onDelta?.(assistantContent);
+          }
+
+          return assistantContent;
+        } catch (error) {
+          clearTimeout(timeoutId);
+
+          // On last attempt, throw so the caller shows the fallback message.
+          if (attempt >= MAX_ATTEMPTS) throw error;
+
+          // Otherwise wait briefly and retry.
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+          options.onDelta?.("");
+        }
       }
 
-      return assistantContent;
+      // Should never reach here, but satisfies TypeScript.
+      throw new Error("All retry attempts failed");
     },
     []
   );
@@ -498,6 +538,35 @@ function ChatPageInner() {
     [refreshSessions, selectedCharacter, speakAssistantResponse, streamChatResponse, voiceHistory]
   );
 
+  // Whisper fallback: send recorded audio to /api/transcribe when the
+  // browser's SpeechRecognition fails (network error, unsupported, etc.)
+  const transcribeWithWhisper = useCallback(
+    async (chunks: Blob[]): Promise<string | null> => {
+      if (chunks.length === 0) return null;
+      try {
+        const audioBlob = new Blob(chunks, { type: "audio/webm" });
+        // Skip if the recording is too short (< 1 KB likely means silence)
+        if (audioBlob.size < 1024) return null;
+
+        const form = new FormData();
+        form.append("audio", audioBlob, "audio.webm");
+
+        const res = await fetch("/api/transcribe", {
+          method: "POST",
+          body: form,
+        });
+        if (!res.ok) return null;
+
+        const data: { text?: string } = await res.json();
+        return data.text?.trim() || null;
+      } catch (err) {
+        console.error("[VoiceChat] Whisper fallback failed:", err);
+        return null;
+      }
+    },
+    []
+  );
+
   const startVoiceCapture = useCallback(async () => {
     if (typeof window === "undefined") return;
     stopSpeechPlayback();
@@ -507,11 +576,9 @@ function ChatPageInner() {
     const RecognitionClass =
       speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
 
-    if (!RecognitionClass) {
-      setSpeechSupported(false);
-      setSpeechError("Voice input is not supported in this browser.");
-      return;
-    }
+    // If the browser doesn't support SpeechRecognition at all, go
+    // straight to the MediaRecorder → Whisper path.
+    const useBrowserRecognition = Boolean(RecognitionClass);
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setSpeechError("Microphone capture is not available in this browser.");
@@ -524,6 +591,7 @@ function ChatPageInner() {
       mediaStreamRef.current = stream;
       audioChunksRef.current = [];
 
+      // Always start MediaRecorder so we have audio to fall back on.
       if (typeof MediaRecorder !== "undefined") {
         const recorder = new MediaRecorder(stream);
         recorder.ondataavailable = (event: BlobEvent) => {
@@ -534,13 +602,45 @@ function ChatPageInner() {
         recorder.start(250);
       }
 
-      const recognition = new RecognitionClass();
+      // ── No browser SpeechRecognition → Whisper-only mode ──
+      if (!useBrowserRecognition) {
+        setIsListening(true);
+        console.log("[VoiceChat] No SpeechRecognition — using Whisper-only mode");
+
+        // Record for up to 10 seconds, then transcribe
+        await new Promise((r) => setTimeout(r, 5000));
+        setIsListening(false);
+
+        // Stop recorder and collect chunks
+        const recorder = mediaRecorderRef.current;
+        const chunks = await new Promise<Blob[]>((resolve) => {
+          if (!recorder || recorder.state === "inactive") {
+            resolve([...audioChunksRef.current]);
+            return;
+          }
+          recorder.onstop = () => resolve([...audioChunksRef.current]);
+          recorder.stop();
+        });
+        cleanupRecordingSession();
+
+        const transcript = await transcribeWithWhisper(chunks);
+        if (transcript) {
+          void runVoiceTurn(transcript);
+        } else {
+          setSpeechError("Could not transcribe your speech. Please try again or use text chat.");
+        }
+        return;
+      }
+
+      // ── Browser SpeechRecognition path (with Whisper fallback) ──
+      const recognition = new RecognitionClass!();
       recognition.continuous = false;
-      recognition.interimResults = true; // Show interim results for better UX
+      recognition.interimResults = true;
       recognition.lang = "en-US";
 
       let hasReceivedResult = false;
       let finalTranscript = "";
+      let usedWhisperFallback = false;
 
       recognition.onstart = () => {
         setIsListening(true);
@@ -553,11 +653,10 @@ function ChatPageInner() {
         hasReceivedResult = true;
         let interim = "";
         let final = "";
-        
+
         for (let i = 0; i < event.results.length; i++) {
           const result = event.results[i];
           const transcript = result?.[0]?.transcript ?? "";
-          // Check if this result is final (isFinal property exists on SpeechRecognitionResult)
           const isFinal = (result as unknown as { isFinal?: boolean }).isFinal;
           if (isFinal) {
             final += transcript;
@@ -565,7 +664,7 @@ function ChatPageInner() {
             interim += transcript;
           }
         }
-        
+
         finalTranscript = final || interim;
         console.log("[VoiceChat] Transcript:", finalTranscript, "(final:", !!final, ")");
       };
@@ -573,30 +672,57 @@ function ChatPageInner() {
       recognition.onerror = (event) => {
         const errorType = event.error;
         console.error("[VoiceChat] Speech recognition error:", errorType, "hasResult:", hasReceivedResult);
-        
-        // If we already got a transcript, ignore the error — the speech was captured successfully
-        // Network errors often fire after successful recognition on some networks
+
+        // If we already got a usable transcript, ignore the error.
         if (hasReceivedResult && finalTranscript.trim()) {
           console.log("[VoiceChat] Ignoring error since we have a transcript");
           return;
         }
-        
+
+        // For network / service errors → try Whisper fallback with the
+        // audio we recorded via MediaRecorder.
+        if (errorType === "network" || errorType === "service-not-allowed") {
+          console.log("[VoiceChat] Attempting Whisper fallback…");
+          usedWhisperFallback = true;
+
+          // Stop recorder and gather audio chunks
+          const recorder = mediaRecorderRef.current;
+          const gatherChunks = new Promise<Blob[]>((resolve) => {
+            if (!recorder || recorder.state === "inactive") {
+              resolve([...audioChunksRef.current]);
+              return;
+            }
+            recorder.onstop = () => resolve([...audioChunksRef.current]);
+            recorder.stop();
+          });
+
+          setIsListening(false);
+          setSpeechError(null);
+
+          void gatherChunks.then(async (chunks) => {
+            const transcript = await transcribeWithWhisper(chunks);
+            cleanupRecordingSession();
+            if (transcript) {
+              void runVoiceTurn(transcript);
+            } else {
+              setSpeechError("Could not transcribe your speech. Please try again.");
+            }
+          });
+          return;
+        }
+
+        // Other errors — show a user-friendly message.
         let message = "I couldn't capture your voice. Please try again.";
-        
         if (errorType === "no-speech") {
           message = "No speech was detected. Please speak louder or check your microphone.";
         } else if (errorType === "audio-capture") {
           message = "Microphone not available. Please check your microphone connection.";
         } else if (errorType === "not-allowed") {
           message = "Microphone access was denied. Please allow microphone permissions in your browser.";
-        } else if (errorType === "network") {
-          message = "Network issue with speech recognition. Try using the text chat instead, or check your connection.";
         } else if (errorType === "aborted") {
           message = "Speech recognition was cancelled.";
-        } else if (errorType === "service-not-allowed") {
-          message = "Speech recognition service is not allowed. This may be a browser restriction.";
         }
-        
+
         setSpeechError(message);
         setIsListening(false);
         cleanupRecordingSession();
@@ -605,9 +731,12 @@ function ChatPageInner() {
       recognition.onend = () => {
         console.log("[VoiceChat] Speech recognition ended. hasResult:", hasReceivedResult, "transcript:", finalTranscript);
         setIsListening(false);
+
+        // If Whisper fallback already took over, don't double-process.
+        if (usedWhisperFallback) return;
+
         cleanupRecordingSession();
-        
-        // Process the transcript if we got one
+
         if (hasReceivedResult && finalTranscript.trim()) {
           void runVoiceTurn(finalTranscript.trim());
         }
@@ -629,7 +758,7 @@ function ChatPageInner() {
       setIsListening(false);
       cleanupRecordingSession();
     }
-  }, [cleanupRecordingSession, runVoiceTurn, stopSpeechPlayback]);
+  }, [cleanupRecordingSession, runVoiceTurn, stopSpeechPlayback, transcribeWithWhisper]);
 
   const startNewChat = useCallback(() => {
     serverSessionIdRef.current = null;
@@ -973,7 +1102,7 @@ function ChatPageInner() {
                           border: "1px solid #3A3A3A",
                         }}
                       >
-                        <MonkCharacter mood="idle" size={24} headOnly />
+                        <MonkCharacter mood={msg.isThinking ? "thinking" : "idle"} size={24} headOnly />
                       </div>
                     )}
                     <div
@@ -995,7 +1124,32 @@ function ChatPageInner() {
                       }}
                     >
                       {msg.isThinking ? (
-                        <span style={{ color: "#C8A96E" }}>...</span>
+                        <div className="flex items-center gap-2.5">
+                          <div className="flex items-center gap-[5px]">
+                            {[0, 150, 300].map((delay) => (
+                              <span
+                                key={delay}
+                                className="inline-block rounded-full animate-bounce"
+                                style={{
+                                  width: 7,
+                                  height: 7,
+                                  backgroundColor: "#C8A96E",
+                                  animationDelay: `${delay}ms`,
+                                  animationDuration: "0.8s",
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <span
+                            className="font-display italic animate-pulse"
+                            style={{
+                              color: "#8F8A81",
+                              fontSize: "0.8rem",
+                            }}
+                          >
+                            Bodhi is reflecting…
+                          </span>
+                        </div>
                       ) : isUser ? (
                         <span>{msg.content}</span>
                       ) : (
@@ -1032,6 +1186,47 @@ function ChatPageInner() {
                                 >
                                   {children}
                                 </em>
+                              ),
+                              a: ({ href, children }) => (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: "#C8A96E",
+                                    textDecoration: "underline",
+                                    textUnderlineOffset: "2px",
+                                  }}
+                                >
+                                  {children}
+                                </a>
+                              ),
+                              ol: ({ children }) => (
+                                <ol
+                                  style={{
+                                    paddingLeft: "1.2em",
+                                    marginBottom: "0.5em",
+                                    listStyleType: "decimal",
+                                  }}
+                                >
+                                  {children}
+                                </ol>
+                              ),
+                              ul: ({ children }) => (
+                                <ul
+                                  style={{
+                                    paddingLeft: "1.2em",
+                                    marginBottom: "0.5em",
+                                    listStyleType: "disc",
+                                  }}
+                                >
+                                  {children}
+                                </ul>
+                              ),
+                              li: ({ children }) => (
+                                <li style={{ marginBottom: "0.2em" }}>
+                                  {children}
+                                </li>
                               ),
                               br: () => <br />,
                             }}

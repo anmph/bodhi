@@ -47,6 +47,15 @@
   background: #4A4A4A;
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @media (max-width: 640px) {
   h1 {
     font-size: 2.4rem !important;
@@ -314,84 +323,62 @@
   color: #e8d5a8;
 }
 
-.sacred-tag-inline {
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 999px;
-  padding: 8px 16px;
-  color: #a8a49c;
-  font-size: 0.8rem;
-  line-height: 1;
-  transition: border-color 0.2s ease, color 0.2s ease;
-  animation: sacredTagFloat 3.8s ease-in-out infinite;
+/* Landing path cards — per-card warm accent via --path-accent */
+.path-card {
+  --path-accent: #c8a96e;
   position: relative;
-  z-index: 4;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 1.35rem 1.5rem;
+  border: 1px solid rgba(48, 46, 42, 0.95);
+  background-color: #1a1a1a;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.sacred-tag-inline:hover {
-  border-color: #c8a96e;
-  color: #e8d5a8;
+.path-card:hover {
+  transform: translateY(-5px);
+  border-color: color-mix(in srgb, var(--path-accent) 42%, #3a3a3a);
+  box-shadow:
+    0 14px 40px color-mix(in srgb, var(--path-accent) 14%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--path-accent) 18%, transparent);
 }
 
-@keyframes sacredTagFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+.path-card--chat {
+  background-image:
+    radial-gradient(ellipse 75% 60% at 100% 0%, rgba(212, 165, 116, 0.28), transparent 58%),
+    linear-gradient(165deg, rgba(212, 165, 116, 0.11) 0%, #1a1917 46%, #141312 100%);
 }
 
-.sacred-path-card {
-  background: linear-gradient(160deg, #2a2a2a 0%, #302a20 100%);
-  border: 1px solid #3a3a3a;
-  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+.path-card--read {
+  background-image:
+    radial-gradient(ellipse 70% 55% at 0% 0%, rgba(196, 149, 106, 0.26), transparent 55%),
+    linear-gradient(168deg, rgba(196, 149, 106, 0.1) 0%, #1a1816 45%, #131211 100%);
 }
 
-.sacred-path-card:hover {
-  transform: translateY(-4px);
-  border-color: #c8a96e;
-  box-shadow: 0 6px 24px rgba(200, 169, 110, 0.14);
+.path-card--meditate {
+  background-image:
+    radial-gradient(ellipse 68% 56% at 52% 8%, rgba(184, 160, 110, 0.24), transparent 56%),
+    linear-gradient(166deg, rgba(184, 160, 110, 0.1) 0%, #191815 44%, #12110f 100%);
 }
 
-.sacred-path-card::before,
-.sacred-path-card::after,
-.sacred-path-card-inner::before,
-.sacred-path-card-inner::after {
-  content: "";
-  position: absolute;
-  width: 15px;
-  height: 15px;
-  border-color: rgba(200, 169, 110, 0.5);
-  pointer-events: none;
+.path-card--pray {
+  background-image:
+    radial-gradient(ellipse 68% 58% at 100% 100%, rgba(200, 123, 138, 0.22), transparent 56%),
+    linear-gradient(170deg, rgba(200, 123, 138, 0.09) 0%, #1b1819 44%, #141112 100%);
 }
 
-.sacred-path-card::before {
-  top: 6px;
-  left: 6px;
-  border-top: 1px solid;
-  border-left: 1px solid;
+.path-card--identify {
+  background-image:
+    radial-gradient(ellipse 72% 56% at 95% 8%, rgba(193, 138, 109, 0.24), transparent 58%),
+    linear-gradient(164deg, rgba(193, 138, 109, 0.1) 0%, #1a1716 46%, #121110 100%);
 }
 
-.sacred-path-card::after {
-  top: 6px;
-  right: 6px;
-  border-top: 1px solid;
-  border-right: 1px solid;
+.path-card--reflect {
+  background-image:
+    radial-gradient(ellipse 72% 56% at 8% 100%, rgba(168, 144, 110, 0.24), transparent 58%),
+    linear-gradient(162deg, rgba(168, 144, 110, 0.1) 0%, #191816 47%, #131210 100%);
 }
 
-.sacred-path-card-inner::before {
-  bottom: 6px;
-  left: 6px;
-  border-bottom: 1px solid;
-  border-left: 1px solid;
-}
-
-.sacred-path-card-inner::after {
-  bottom: 6px;
-  right: 6px;
-  border-bottom: 1px solid;
-  border-right: 1px solid;
-}
-
-@media (max-width: 767px) {
-  .sacred-tag-inline {
-    animation: none;
-  }
+.path-card-inner {
+  position: relative;
 }

@@ -14,6 +14,14 @@ import {
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+/** Race a promise against a timeout. Resolves to the fallback on timeout. */
+function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+
 const VALID_CHARACTERS = ["buddha", "avalokiteshvara", "bodhidharma"] as const;
 type VoiceCharacter = (typeof VALID_CHARACTERS)[number];
 
@@ -75,40 +83,46 @@ export async function POST(req: Request) {
         : new Types.ObjectId();
 
     // Build the personalization context from server-side data (user profile
-    // + most recent chat sessions). Fall back to the base prompt if anything
-    // fails so the chat never hard-breaks on a DB hiccup.
-    let personalizationContext = "";
-    try {
-      await connectToDatabase();
-      const [userDoc, priorSessions] = await Promise.all([
-        User.findById(userObjectId).lean(),
-        ChatSession.find({ userId: userObjectId })
-          .sort({ updatedAt: -1 })
-          .limit(6)
-          .lean(),
-      ]);
-      if (userDoc) {
-        const derived = deriveProfileFromSessions(priorSessions);
-        personalizationContext = buildPersonalizationContext(
-          {
-            experienceLevel: userDoc.experienceLevel,
-            preferredTradition:
-              userDoc.preferredTradition ?? derived.preferredTradition,
-            topicsExplored:
-              userDoc.topicsExplored?.length
-                ? userDoc.topicsExplored
-                : derived.topicsExplored,
-            practicesStarted:
-              userDoc.practicesStarted?.length
-                ? userDoc.practicesStarted
-                : derived.practicesStarted,
-          },
-          priorSessions
-        );
-      }
-    } catch (err) {
-      console.error("[api/chat] failed to build personalization context", err);
-    }
+    // + most recent chat sessions). Guarded by a 4-second timeout so a slow
+    // or cold MongoDB connection never blocks the chat. Falls back to the
+    // base system prompt on timeout or error.
+    const personalizationContext = await withTimeout(
+      (async () => {
+        try {
+          await connectToDatabase();
+          const [userDoc, priorSessions] = await Promise.all([
+            User.findById(userObjectId).lean(),
+            ChatSession.find({ userId: userObjectId })
+              .sort({ updatedAt: -1 })
+              .limit(6)
+              .lean(),
+          ]);
+          if (!userDoc) return "";
+          const derived = deriveProfileFromSessions(priorSessions);
+          return buildPersonalizationContext(
+            {
+              experienceLevel: userDoc.experienceLevel,
+              preferredTradition:
+                userDoc.preferredTradition ?? derived.preferredTradition,
+              topicsExplored:
+                userDoc.topicsExplored?.length
+                  ? userDoc.topicsExplored
+                  : derived.topicsExplored,
+              practicesStarted:
+                userDoc.practicesStarted?.length
+                  ? userDoc.practicesStarted
+                  : derived.practicesStarted,
+            },
+            priorSessions
+          );
+        } catch (err) {
+          console.error("[api/chat] failed to build personalization context", err);
+          return "";
+        }
+      })(),
+      4_000,
+      "" // fallback: empty string means we use the base prompt
+    );
 
     const activeSystemPrompt =
       typeof systemPrompt === "string" && systemPrompt.trim().length > 0
@@ -161,90 +175,37 @@ export async function POST(req: Request) {
       }
     };
 
-    // Step 1: Initial model call with tools available.
-    const initialResponse = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 2048,
-      system: personalizedSystemPrompt,
-      tools: TOOLS,
-      tool_choice: { type: "auto" },
-      messages: apiMessages,
-    });
-
-    const toolUseBlocks = initialResponse.content.filter(
-      (b) => b.type === "tool_use"
-    );
-
-    // No-tool branch: stream the direct answer, persist at end.
-    if (toolUseBlocks.length === 0) {
-      const textContent = initialResponse.content.find(
-        (b) => b.type === "text"
-      );
-      const text = textContent?.type === "text" ? textContent.text : "";
-      const meta = JSON.stringify({ tools: [] }) + "\n---STREAM---\n";
-      const encoder = new TextEncoder();
-
-      const stream = new ReadableStream({
-        start(controller) {
-          controller.enqueue(encoder.encode(meta + text));
-          controller.close();
-          // Fire and forget persistence.
-          void persistSession(text, []);
-        },
-      });
-
-      return new Response(stream, {
-        headers: {
-          "Content-Type": "text/plain; charset=utf-8",
-          "X-Session-Id": resolvedSessionId.toHexString(),
-        },
-      });
-    }
-
-    // Tool-use branch: execute tools, then stream the final response.
-    const toolsUsed = toolUseBlocks
-      .map((b) => (b.type === "tool_use" ? b.name : ""))
-      .filter(Boolean);
-
-    const toolResults = await Promise.all(
-      toolUseBlocks.map(async (block) => {
-        if (block.type !== "tool_use") return null;
-        const result = await executeTool(
-          block.name,
-          block.input as Record<string, unknown>
-        );
-        return {
-          type: "tool_result" as const,
-          tool_use_id: block.id,
-          content: result,
-        };
-      })
-    );
-
-    const modelStream = client.messages.stream({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 4096,
-      system: personalizedSystemPrompt,
-      tools: TOOLS,
-      messages: [
-        ...apiMessages,
-        { role: "assistant" as const, content: initialResponse.content },
-        {
-          role: "user" as const,
-          content: toolResults.filter(Boolean) as Anthropic.ToolResultBlockParam[],
-        },
-      ],
-    });
+    // ── Single-pass streaming with inline tool handling ──
+    // Instead of a blocking create() followed by a separate streaming call,
+    // we stream from the very first Claude call. For simple questions (no
+    // tools), the user sees tokens immediately — no double round-trip.
+    // When Claude decides to use tools, we execute them mid-stream and
+    // continue with a second streaming call.
 
     const encoder = new TextEncoder();
+    const preamble = JSON.stringify({ tools: [] }) + "\n---STREAM---\n";
+
     const readableStream = new ReadableStream({
       async start(controller) {
         let assistantText = "";
-        try {
-          const meta = JSON.stringify({ tools: toolsUsed }) + "\n---STREAM---\n";
-          controller.enqueue(encoder.encode(meta));
+        let toolsUsed: string[] = [];
 
-          for await (const event of modelStream) {
+        try {
+          // Send preamble immediately so the client knows streaming has begun.
+          controller.enqueue(encoder.encode(preamble));
+
+          // Pass 1: stream with tools available
+          const stream1 = client.messages.stream({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 2048,
+            system: personalizedSystemPrompt,
+            tools: TOOLS,
+            tool_choice: { type: "auto" },
+            messages: apiMessages,
+          });
+
+          // Forward text deltas to the client in real time.
+          for await (const event of stream1) {
             if (
               event.type === "content_block_delta" &&
               event.delta.type === "text_delta"
@@ -253,12 +214,81 @@ export async function POST(req: Request) {
               controller.enqueue(encoder.encode(event.delta.text));
             }
           }
+
+          // Check if tools were invoked in this response.
+          const finalMsg = await stream1.finalMessage();
+          const toolBlocks = finalMsg.content.filter(
+            (b) => b.type === "tool_use"
+          );
+
+          if (toolBlocks.length === 0) {
+            // No tools — text was already streamed. Done.
+            controller.close();
+            void persistSession(assistantText, []);
+            return;
+          }
+
+          // ── Tool-use branch ──
+          toolsUsed = toolBlocks
+            .map((b) => (b.type === "tool_use" ? b.name : ""))
+            .filter(Boolean);
+
+          const toolResults = await Promise.all(
+            toolBlocks.map(async (block) => {
+              if (block.type !== "tool_use") return null;
+              const result = await executeTool(
+                block.name,
+                block.input as Record<string, unknown>
+              );
+              return {
+                type: "tool_result" as const,
+                tool_use_id: block.id,
+                content: result,
+              };
+            })
+          );
+
+          // If pass 1 emitted some text (e.g. "Let me look that up…"),
+          // add a visual separator before the tool-informed answer.
+          if (assistantText.trim()) {
+            assistantText += "\n\n";
+            controller.enqueue(encoder.encode("\n\n"));
+          }
+
+          // Pass 2: stream the follow-up with tool results
+          const stream2 = client.messages.stream({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 4096,
+            system: personalizedSystemPrompt,
+            tools: TOOLS,
+            messages: [
+              ...apiMessages,
+              { role: "assistant" as const, content: finalMsg.content },
+              {
+                role: "user" as const,
+                content: toolResults.filter(
+                  Boolean
+                ) as Anthropic.ToolResultBlockParam[],
+              },
+            ],
+          });
+
+          for await (const event of stream2) {
+            if (
+              event.type === "content_block_delta" &&
+              event.delta.type === "text_delta"
+            ) {
+              assistantText += event.delta.text;
+              controller.enqueue(encoder.encode(event.delta.text));
+            }
+          }
+
           controller.close();
         } catch (err) {
-          console.error("[api/chat] tool follow-up stream error:", err);
+          console.error("[api/chat] stream error:", err);
           try {
             const tail =
-              "\n\n_I could not finish that reply (model or connection issue). Please tap send again — your question is still saved._";
+              "\n\n_I could not finish that reply. Please try again._";
             controller.enqueue(encoder.encode(tail));
             controller.close();
           } catch {
@@ -269,9 +299,6 @@ export async function POST(req: Request) {
             }
           }
         } finally {
-          // Persist regardless of any mid-stream error: partial text is still
-          // useful history, and we never want the chat to lose the user's
-          // message even if the tool pipeline misbehaves.
           void persistSession(assistantText, toolsUsed);
         }
       },

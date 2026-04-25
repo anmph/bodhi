@@ -1,6 +1,6 @@
 import mongoose, { Schema, Model, Document, Types } from "mongoose";
 
-export type PracticeType = "chat" | "scripture" | "prayer" | "identify";
+export type PracticeType = "chat" | "scripture" | "prayer" | "identify" | "meditation";
 
 export interface IPracticeLog {
   userId: Types.ObjectId;
@@ -23,7 +23,7 @@ const PracticeLogSchema = new Schema<IPracticeLogDocument>(
     },
     type: {
       type: String,
-      enum: ["chat", "scripture", "prayer", "identify"],
+      enum: ["chat", "scripture", "prayer", "identify", "meditation"],
       required: true,
     },
     detail: { type: String, default: "" },

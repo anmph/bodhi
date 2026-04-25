@@ -212,9 +212,6 @@ function ScriptureReaderInner({ scripture }: ScriptureReaderClientProps) {
               >
                 {scripture.title}
               </h1>
-              <p className="font-display italic text-[1rem] mb-1" style={{ color: "#C8A96E" }}>
-                {scripture.vietnameseTitle}
-              </p>
               <p className="font-display italic text-[0.95rem]" style={{ color: "#6E6A62" }}>
                 {scripture.origin}
               </p>
@@ -345,13 +342,13 @@ function ScriptureReaderInner({ scripture }: ScriptureReaderClientProps) {
                 className="font-display text-[2rem] mb-4"
                 style={{ color: "#C8A96E" }}
               >
-                Hồi Hướng Công Đức
+                Dedication of Merit
               </h2>
               <p
                 className="font-display italic text-[1.08rem] leading-[1.9] whitespace-pre-line mb-4"
                 style={{ color: "#E8D5A8" }}
               >
-                {"Nguyện đem công đức này\nHướng về khắp tất cả\nĐệ tử và chúng sanh\nĐều trọn thành Phật đạo."}
+                {"May this merit be shared with all beings.\nMay all beings be peaceful, joyful, and free from suffering.\nMay wisdom and compassion flourish everywhere."}
               </p>
               <p
                 className="font-body text-[0.96rem] leading-[1.8] mb-4"

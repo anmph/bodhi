@@ -24,6 +24,9 @@ export async function webSearch(
   }
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6_000);
+
     const response = await fetch("https://api.tavily.com/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,11 +34,14 @@ export async function webSearch(
         api_key: apiKey,
         query,
         max_results: maxResults,
-        search_depth: "basic",
+        search_depth: "advanced",
         include_answer: false,
         include_images: false,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       console.error("Tavily search failed:", response.statusText);
@@ -49,7 +55,11 @@ export async function webSearch(
       content: r.content,
     }));
   } catch (error) {
-    console.error("Web search error:", error);
+    if (error instanceof DOMException && error.name === "AbortError") {
+      console.warn("Tavily search timed out after 6 s");
+    } else {
+      console.error("Web search error:", error);
+    }
     return [];
   }
 }

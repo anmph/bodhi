@@ -9,6 +9,8 @@ import AuthGate from "@/components/auth/AuthGate";
 const TRADITION_COLORS: Record<string, string> = {
   Theravada: "#C8A96E",
   Mahayana: "#7BA886",
+  Zen: "#8BB0C4",
+  Tibetan: "#C47E7E",
 };
 
 export default function ScripturesPage() {
@@ -29,7 +31,7 @@ function ScripturesPageInner() {
           className="block font-display text-[0.85rem] mb-2"
           style={{ color: "#C8A96E" }}
         >
-          ☸ Scriptures / Kinh Điển
+          ☸ Scriptures
         </span>
         <h1
           className="font-display text-[2.4rem] sm:text-[3rem] font-bold tracking-[-0.02em] leading-tight mb-3"
@@ -84,12 +86,6 @@ function ScripturesPageInner() {
                     >
                       {scripture.title}
                     </h3>
-                    <p
-                      className="font-display italic text-[0.9rem]"
-                      style={{ color: "#C8A96E" }}
-                    >
-                      {scripture.vietnameseTitle}
-                    </p>
                   </div>
                 </div>
                 <div

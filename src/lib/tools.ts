@@ -25,14 +25,19 @@ export const TOOLS: Tool[] = [
   {
     name: "search_web",
     description:
-      "Search the web for real-world Buddhist resources: meditation centers, YouTube videos, retreat centers, teachers, books, apps, or local sitting groups. Use this when the user is asking for recommendations, resources, or real-world connections — not just conceptual explanations.",
+      "Search the web for real-world Buddhist resources: meditation centers, YouTube videos, retreat centers, teachers, books, apps, or local sitting groups. Use this when the user is asking for recommendations, resources, or real-world connections — not just conceptual explanations.\n\n" +
+      "IMPORTANT — when presenting results you MUST:\n" +
+      "1. Include the clickable URL for EVERY recommendation (format as a markdown link).\n" +
+      "2. Include the address / location when available.\n" +
+      "3. Explain WHY each result is a good fit for THIS specific user — reference their experience level, preferred tradition, topics they've explored, or practices they've tried (from the personalization context). For example: \"Because you've been exploring Zen and practicing daily sitting, this center's zazen schedule would fit naturally into your routine.\"\n" +
+      "4. Mention any ratings, reviews, or standout details (e.g. beginner-friendly, famous teacher, free sessions).",
     input_schema: {
       type: "object" as const,
       properties: {
         query: {
           type: "string",
           description:
-            "Search query. Be specific — include location if mentioned, add 'Buddhism' or 'meditation' context.",
+            "Search query. Be specific — include location if mentioned, add 'Buddhism' or 'meditation' context. Append 'address reviews ratings' to get richer results.",
         },
       },
       required: ["query"],
@@ -85,14 +90,23 @@ export async function executeTool(
 
   if (toolName === "search_web") {
     const query = toolInput.query as string;
-    const results = await webSearch(query, 4);
+    const results = await webSearch(query, 5);
     if (results.length === 0)
       return "No web results found. The web search service may be unavailable.";
-    return results
+    const formatted = results
       .map(
-        (r, i) => `${i + 1}. ${r.title}\n   URL: ${r.url}\n   ${r.content}`
+        (r, i) =>
+          `### Result ${i + 1}: ${r.title}\n` +
+          `Link: ${r.url}\n` +
+          `Details: ${r.content}`
       )
       .join("\n\n");
+    return (
+      formatted +
+      "\n\n---\n" +
+      "REMINDER: You MUST include a markdown link for each recommendation. " +
+      "You MUST explain why each is relevant to this user's specific profile and practice history."
+    );
   }
 
   if (toolName === "suggest_learning_path") {

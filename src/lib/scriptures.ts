@@ -13,7 +13,6 @@ export interface ScriptureSection {
 export interface ScriptureEntry {
   id: string;
   title: string;
-  vietnameseTitle: string;
   tradition: string;
   origin: string;
   tagline: string;
@@ -35,38 +34,63 @@ const BASE_SCRIPTURES = rawScriptures as Array<{
 
 const CURATED_META: Record<
   string,
-  { vietnameseTitle: string; readingTimeMinutes: number; description: string }
+  { readingTimeMinutes: number; description: string }
 > = {
   "heart-sutra": {
-    vietnameseTitle: "Bát Nhã Tâm Kinh",
     readingTimeMinutes: 9,
     description:
       "A concise Mahayana scripture on emptiness and wisdom, guiding the mind beyond grasping.",
   },
   dhammapada: {
-    vietnameseTitle: "Pháp Cú Kinh (chọn lọc)",
-    readingTimeMinutes: 12,
+    readingTimeMinutes: 25,
     description:
-      "Selected verses on mind, ethics, and awakening from one of the most beloved early Buddhist texts.",
+      "The Buddha's essential teachings on mind, ethics, and awakening in 423 memorable verses — the most beloved early Buddhist text.",
   },
   "metta-sutta": {
-    vietnameseTitle: "Kinh Từ Bi",
     readingTimeMinutes: 6,
     description:
       "A practical teaching on boundless loving-kindness for all beings, gentle and deeply transformative.",
   },
   "diamond-sutra": {
-    vietnameseTitle: "Kim Cang Kinh (trích đoạn)",
-    readingTimeMinutes: 11,
+    readingTimeMinutes: 18,
     description:
-      "Selected passages that challenge attachment and point to freedom through non-clinging insight.",
+      "A profound dialogue on the nature of perception, reality, and non-attachment — the sutra that awakened the Sixth Patriarch.",
+  },
+  "platform-sutra": {
+    readingTimeMinutes: 20,
+    description:
+      "The only Chinese Buddhist text honored as a 'sutra' — Huineng's revolutionary teaching on sudden awakening and seeing one's true nature.",
+  },
+  "song-of-mahamudra": {
+    readingTimeMinutes: 12,
+    description:
+      "Tilopa's direct, uncompromising instructions on the nature of mind — a jewel of the Tibetan Kagyu tradition.",
+  },
+  bodhicaryavatara: {
+    readingTimeMinutes: 22,
+    description:
+      "Shantideva's masterwork on the bodhisattva path — compassion, patience, and the exchange of self for others.",
+  },
+  "anapanasati-sutta": {
+    readingTimeMinutes: 10,
+    description:
+      "The Buddha's most detailed meditation manual — sixteen steps of mindfulness of breathing leading to full liberation.",
+  },
+  "lotus-sutra": {
+    readingTimeMinutes: 15,
+    description:
+      "One of the most influential Mahayana sutras, teaching that all beings without exception can attain buddhahood.",
+  },
+  "tibetan-book-of-dead": {
+    readingTimeMinutes: 14,
+    description:
+      "A guide for navigating the intermediate states between death and rebirth — recognizing the clear light of the mind.",
   },
 };
 
 const FOUR_NOBLE_TRUTHS: ScriptureEntry = {
   id: "four-noble-truths",
   title: "The Four Noble Truths",
-  vietnameseTitle: "Tứ Diệu Đế",
   tradition: "Theravada",
   origin: "Dhammacakkappavattana Sutta, Pali Canon",
   tagline: "The Buddha's first teaching: diagnose suffering, reveal its cause, and point to liberation.",
@@ -135,6 +159,12 @@ const CURATED_ORDER = [
   "dhammapada",
   "metta-sutta",
   "diamond-sutra",
+  "platform-sutra",
+  "song-of-mahamudra",
+  "bodhicaryavatara",
+  "anapanasati-sutta",
+  "lotus-sutra",
+  "tibetan-book-of-dead",
 ];
 
 export const CURATED_SCRIPTURES: ScriptureEntry[] = [
@@ -146,7 +176,6 @@ export const CURATED_SCRIPTURES: ScriptureEntry[] = [
     const meta = CURATED_META[id];
     return {
       ...scripture,
-      vietnameseTitle: meta.vietnameseTitle,
       readingTimeMinutes: meta.readingTimeMinutes,
       description: meta.description,
     };
