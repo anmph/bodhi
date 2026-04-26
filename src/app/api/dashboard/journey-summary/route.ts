@@ -53,6 +53,7 @@ export async function GET() {
       scriptureCount,
       prayerCount,
       identifyCount,
+      meditationCount,
       streakLogs,
       chatSessions,
     ] = await Promise.all([
@@ -67,6 +68,7 @@ export async function GET() {
       PracticeLog.countDocuments({ userId: userObjectId, type: "scripture" }),
       PracticeLog.countDocuments({ userId: userObjectId, type: "prayer" }),
       PracticeLog.countDocuments({ userId: userObjectId, type: "identify" }),
+      PracticeLog.countDocuments({ userId: userObjectId, type: "meditation" }),
       PracticeLog.find({
         userId: userObjectId,
         date: { $gte: since },
@@ -115,6 +117,7 @@ export async function GET() {
             scripturesRead: scriptureCount,
             prayerCount,
             identifyCount,
+            meditationCount,
             streak: currentStreak,
             favoriteTeacher,
             memberSince,

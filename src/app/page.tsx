@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { MessageCircle, BookOpen, Timer, HandHeart, Eye, Compass } from "lucide-react";
 import AuthButton from "@/components/auth/AuthButton";
 
 const QUOTES = [
@@ -75,8 +76,6 @@ const CARD_PATHS: {
   },
 ];
 
-const GOLD = "#C8A96E";
-
 function LotusMark() {
   return (
     <svg
@@ -98,125 +97,22 @@ function LotusMark() {
 }
 
 function PathIllustration({ pathKey, accent }: { pathKey: PathKey; accent: string }) {
-  const cls = "w-[2.9rem] h-[2.9rem] sm:w-[3.1rem] sm:h-[3.1rem] shrink-0 drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]";
-  if (pathKey === "chat") {
-    return (
-      <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <path
-          d="M52 18h14c5 0 9 4 9 9v18c0 5-4 9-9 9H48l-10 9V54h-6c-5 0-9-4-9-9V27c0-5 4-9 9-9h20Z"
-          stroke={accent}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M18 34h26c4.5 0 8 3.5 8 8v10c0 4.5-3.5 8-8 8H22l-8 7V60h-4c-4.5 0-8-3.5-8-8V42c0-4.5 3.5-8 8-8Z"
-          stroke={GOLD}
-          strokeWidth="2"
-          strokeLinejoin="round"
-          opacity={0.92}
-        />
-        <circle cx="30" cy="46" r="2.2" fill={accent} />
-        <circle cx="40" cy="46" r="2.2" fill={GOLD} />
-        <circle cx="50" cy="46" r="2.2" fill={accent} />
-      </svg>
-    );
+  const size = 36;
+  const props = { size, color: accent, strokeWidth: 1.5 };
+  switch (pathKey) {
+    case "chat":
+      return <MessageCircle {...props} />;
+    case "read":
+      return <BookOpen {...props} />;
+    case "meditate":
+      return <Timer {...props} />;
+    case "pray":
+      return <HandHeart {...props} />;
+    case "identify":
+      return <Eye {...props} />;
+    case "reflect":
+      return <Compass {...props} />;
   }
-  if (pathKey === "read") {
-    return (
-      <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <path
-          d="M44 14v62"
-          stroke={GOLD}
-          strokeWidth="2.4"
-          strokeLinecap="round"
-          opacity={0.85}
-        />
-        <path
-          d="M14 22h22c6 0 8 2 8 8v40c0-6-2-8-8-8H14V22Z"
-          stroke={accent}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M74 22H52c-6 0-8 2-8 8v40c0-6 2-8 8-8h22V22Z"
-          stroke={accent}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-        />
-        <path d="M22 32h12M22 40h14M22 48h10" stroke={GOLD} strokeWidth="1.4" strokeLinecap="round" opacity={0.55} />
-        <path d="M54 32h12M52 40h14M56 48h10" stroke={GOLD} strokeWidth="1.4" strokeLinecap="round" opacity={0.55} />
-        <path d="M40 72h8" stroke={accent} strokeWidth="1.8" strokeLinecap="round" opacity={0.6} />
-      </svg>
-    );
-  }
-  if (pathKey === "pray") {
-    return (
-      <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <path
-          d="M44 20c-8 6-14 14-14 24 0 12 10 22 22 22s22-10 22-22c0-10-6-18-14-24"
-          stroke={accent}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-        />
-        <path
-          d="M44 20c8 6 14 14 14 24"
-          stroke={GOLD}
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          opacity={0.75}
-        />
-        <path d="M44 52v14" stroke={accent} strokeWidth="2" strokeLinecap="round" />
-        <path d="M32 62h24" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" opacity={0.7} />
-        <ellipse cx="44" cy="18" rx="3" ry="5" fill={GOLD} opacity={0.35} />
-      </svg>
-    );
-  }
-  if (pathKey === "meditate") {
-    return (
-      <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <circle cx="44" cy="44" r="11" stroke={accent} strokeWidth="2.2" />
-        <circle cx="44" cy="44" r="21" stroke={GOLD} strokeWidth="1.7" opacity={0.6} />
-        <circle cx="44" cy="44" r="30" stroke={accent} strokeWidth="1.4" opacity={0.35} />
-        <path d="M44 14v8M44 66v8M14 44h8M66 44h8" stroke={GOLD} strokeWidth="1.6" strokeLinecap="round" opacity={0.55} />
-      </svg>
-    );
-  }
-  if (pathKey === "identify") {
-    return (
-      <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-        <path
-          d="M12 44C18 30 30 22 44 22C58 22 70 30 76 44C70 58 58 66 44 66C30 66 18 58 12 44Z"
-          stroke={accent}
-          strokeWidth="2.2"
-          strokeLinejoin="round"
-        />
-        <circle cx="44" cy="44" r="10.5" stroke={GOLD} strokeWidth="1.9" />
-        <circle cx="44" cy="44" r="4.5" fill={accent} opacity={0.85} />
-        <circle cx="41.5" cy="41.5" r="1.3" fill="#FFFFFF" />
-      </svg>
-    );
-  }
-  return (
-    <svg className={cls} viewBox="0 0 88 88" fill="none" aria-hidden="true">
-      <circle cx="44" cy="48" r="26" stroke={accent} strokeWidth="1.6" opacity={0.35} />
-      <circle cx="44" cy="48" r="18" stroke={GOLD} strokeWidth="1.5" opacity={0.45} />
-      <circle cx="44" cy="48" r="10" stroke={accent} strokeWidth="1.4" opacity={0.55} />
-      <path
-        d="M44 22c-4 8-4 16 0 24M44 22c4 8 4 16 0 24"
-        stroke={GOLD}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        opacity={0.5}
-      />
-      <path
-        d="M44 58c6 2 10 6 12 12M44 58c-6 2-10 6-12 12"
-        stroke={accent}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle cx="44" cy="48" r="3" fill={GOLD} opacity={0.85} />
-    </svg>
-  );
 }
 
 function getTodaysQuote() {

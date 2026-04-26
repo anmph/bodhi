@@ -25,6 +25,7 @@ const DEFAULT_STATS = {
   scripturesRead: 0,
   prayerCount: 0,
   identifyCount: 0,
+  meditationCount: 0,
   currentStreak: 0,
   memberSince: "",
   user: null as {
@@ -38,6 +39,7 @@ const DEFAULT_STATS = {
   } | null,
   prayerSummary: [] as Array<{ title: string; count: number; lastPrayed: string }>,
   identifySummary: [] as Array<{ title: string; count: number; lastIdentified: string }>,
+  meditationSummary: [] as Array<{ title: string; count: number; lastSession: string }>,
   practicesStarted: [] as string[],
 };
 
@@ -72,6 +74,8 @@ export async function GET() {
       prayerLogs,
       identifyCount,
       identifyLogs,
+      meditationCount,
+      meditationLogs,
       streakLogs,
       chatSessions,
     ] = await Promise.all([
@@ -95,6 +99,11 @@ export async function GET() {
         .lean(),
       PracticeLog.countDocuments({ userId: userObjectId, type: "identify" }),
       PracticeLog.find({ userId: userObjectId, type: "identify" })
+        .sort({ date: -1 })
+        .limit(200)
+        .lean(),
+      PracticeLog.countDocuments({ userId: userObjectId, type: "meditation" }),
+      PracticeLog.find({ userId: userObjectId, type: "meditation" })
         .sort({ date: -1 })
         .limit(200)
         .lean(),
@@ -174,6 +183,28 @@ export async function GET() {
         new Date(b.lastIdentified).getTime() - new Date(a.lastIdentified).getTime()
     );
 
+    const meditationGrouped = new Map<
+      string,
+      { title: string; count: number; lastSession: string }
+    >();
+    for (const log of meditationLogs) {
+      const title = (log.detail ?? "").replace(/\s*\([^)]+\)\s*$/, "").trim() || "Meditation";
+      const existing = meditationGrouped.get(title);
+      const sessionAt = new Date(log.date).toISOString();
+      if (!existing) {
+        meditationGrouped.set(title, { title, count: 1, lastSession: sessionAt });
+      } else {
+        existing.count += 1;
+        if (new Date(sessionAt).getTime() > new Date(existing.lastSession).getTime()) {
+          existing.lastSession = sessionAt;
+        }
+      }
+    }
+    const meditationSummary = Array.from(meditationGrouped.values()).sort(
+      (a, b) =>
+        new Date(b.lastSession).getTime() - new Date(a.lastSession).getTime()
+    );
+
     const memberSince = user?.createdAt
       ? new Date(user.createdAt).toISOString()
       : "";
@@ -191,6 +222,7 @@ export async function GET() {
       scripturesRead: scriptureCount,
       prayerCount,
       identifyCount,
+      meditationCount,
       currentStreak,
       memberSince,
       user: user
@@ -206,6 +238,7 @@ export async function GET() {
         : null,
       prayerSummary,
       identifySummary,
+      meditationSummary,
       practicesStarted,
     });
   } catch (err) {

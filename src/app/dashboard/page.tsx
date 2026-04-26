@@ -43,6 +43,12 @@ interface IdentifySummary {
   lastIdentified: string;
 }
 
+interface MeditationSummary {
+  title: string;
+  count: number;
+  lastSession: string;
+}
+
 interface StatsResponse {
   totalConversations: number;
   totalMessages: number;
@@ -51,6 +57,7 @@ interface StatsResponse {
   scripturesRead: number;
   prayerCount: number;
   identifyCount: number;
+  meditationCount: number;
   currentStreak: number;
   memberSince: string;
   user: {
@@ -64,6 +71,7 @@ interface StatsResponse {
   } | null;
   prayerSummary: PrayerSummary[];
   identifySummary: IdentifySummary[];
+  meditationSummary: MeditationSummary[];
   practicesStarted: string[];
 }
 
@@ -212,9 +220,11 @@ function DashboardPageInner() {
   const chatCount = stats?.totalConversations ?? 0;
   const totalMessages = stats?.totalMessages ?? 0;
   const prayerCount = stats?.prayerCount ?? 0;
+  const meditationCount = stats?.meditationCount ?? 0;
   const scripturesReadCount = stats?.scripturesRead ?? 0;
   const prayerStats = stats?.prayerSummary ?? [];
   const identifyStats = stats?.identifySummary ?? [];
+  const meditationStats = stats?.meditationSummary ?? [];
   const topTopics = stats?.topTopics ?? [];
   const practicesStarted = stats?.practicesStarted ?? [];
   const favoriteTeacher = stats?.favoriteTeacher ?? "Not yet chosen";
@@ -226,6 +236,7 @@ function DashboardPageInner() {
     (readings?.totalReads ?? 0) === 0 &&
     chatCount === 0 &&
     prayerCount === 0 &&
+    meditationCount === 0 &&
     scripturesReadCount === 0 &&
     totalMessages === 0;
 
@@ -519,6 +530,8 @@ function DashboardPageInner() {
                   {scripturesReadCount > 0 &&
                     ` · ${scripturesReadCount} scripture read${scripturesReadCount === 1 ? "" : "s"}`}
                   {prayerCount > 0 && ` · ${prayerCount} prayer${prayerCount === 1 ? "" : "s"}`}
+                  {meditationCount > 0 &&
+                    ` · ${meditationCount} meditation session${meditationCount === 1 ? "" : "s"}`}
                 </span>
                 {stats?.user?.preferredTradition && (
                   <span style={{ color: "#A8A49C", fontSize: "0.82rem" }}>
@@ -587,6 +600,83 @@ function DashboardPageInner() {
                 </div>
               </div>
             </>
+          )}
+        </section>
+
+        <section
+          className="rounded-[14px] p-5"
+          style={{ backgroundColor: "#242424", border: "1px solid #323232" }}
+        >
+          <h2
+            className="font-display text-[1.25rem] mb-3"
+            style={{ color: "#F0EDE6" }}
+          >
+            Meditation History
+          </h2>
+          {isLoading ? (
+            <p
+              className="animate-pulse"
+              style={{ color: "#8F8A81", fontSize: "0.9rem" }}
+            >
+              Loading meditation history…
+            </p>
+          ) : meditationStats.length === 0 ? (
+            <div>
+              <p
+                style={{
+                  color: "#D4CFC7",
+                  lineHeight: 1.6,
+                  marginBottom: 4,
+                }}
+              >
+                No meditation sessions logged yet.
+              </p>
+              <p
+                style={{
+                  color: "#8F8A81",
+                  fontSize: "0.84rem",
+                  lineHeight: 1.6,
+                }}
+              >
+                Start a meditation session to track your consistency here.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              <p style={{ color: "#C8A96E", fontSize: "0.82rem", marginBottom: 2 }}>
+                🧘 Total sessions: {meditationCount}
+              </p>
+              {meditationStats.map((entry) => (
+                <div
+                  key={entry.title}
+                  className="rounded-[10px] px-3 py-2.5"
+                  style={{
+                    backgroundColor: "#202020",
+                    border: "1px solid #2F2F2F",
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span style={{ color: "#E8D5A8", fontWeight: 600 }}>
+                      {entry.title}
+                    </span>
+                    <span
+                      style={{ color: "#C8A96E", fontSize: "0.78rem" }}
+                    >
+                      {entry.count}x sessions
+                    </span>
+                  </div>
+                  <p
+                    style={{
+                      color: "#8F8A81",
+                      fontSize: "0.76rem",
+                      marginTop: 2,
+                    }}
+                  >
+                    Last session: {formatDate(entry.lastSession)}
+                  </p>
+                </div>
+              ))}
+            </div>
           )}
         </section>
 

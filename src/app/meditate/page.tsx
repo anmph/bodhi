@@ -186,7 +186,12 @@ export default function MeditatePage() {
         }),
       });
       if (!res.ok) {
-        throw new Error("Could not save session.");
+        let msg = "Could not save session.";
+        try {
+          const j = await res.json();
+          if (j.error) msg = j.error;
+        } catch { /* ignore */ }
+        throw new Error(msg);
       }
       setSaveState("saved");
     } catch (err) {

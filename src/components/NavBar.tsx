@@ -2,27 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { MessageCircle, BookOpen, Timer, HandHeart, Eye, BarChart3, Compass } from "lucide-react";
+import type { ReactNode, ElementType } from "react";
 import AuthButton from "@/components/auth/AuthButton";
 
 interface NavItem {
   href: string;
   label: string;
+  icon: ElementType;
 }
 
 const NAV_GROUPS: NavItem[][] = [
   [
-    { href: "/chat", label: "Chat" },
-    { href: "/scriptures", label: "Scriptures" },
-    { href: "/meditate", label: "Meditate" },
+    { href: "/chat", label: "Chat", icon: MessageCircle },
+    { href: "/scriptures", label: "Scriptures", icon: BookOpen },
+    { href: "/meditate", label: "Meditate", icon: Timer },
   ],
   [
-    { href: "/prayers", label: "Prayers" },
-    { href: "/identify", label: "Identify" },
+    { href: "/prayers", label: "Prayers", icon: HandHeart },
+    { href: "/identify", label: "Identify", icon: Eye },
   ],
   [
-    { href: "/insights", label: "Insights" },
-    { href: "/dashboard", label: "My Practice" },
+    { href: "/insights", label: "Insights", icon: BarChart3 },
+    { href: "/dashboard", label: "My Practice", icon: Compass },
   ],
 ];
 
@@ -71,6 +73,7 @@ export default function NavBar({ rightSlot }: NavBarProps) {
                         isActive ? "text-[#C8A96E]" : "text-[#6E6A62] hover:text-[#A8A49C]"
                       }`}
                     >
+                      <item.icon size={14} className="inline-block mr-1 -mt-[1px]" />
                       {item.label}
                       <span
                         className="absolute left-0 right-0 -bottom-[1px] h-[2px] rounded-full transition-opacity duration-200"

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import ReactMarkdown from "react-markdown";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { Crown, Heart, Flame } from "lucide-react";
 import MonkCharacter, { MonkMood } from "@/components/monk/MonkCharacter";
 import ChatInput from "@/components/ChatInput";
 import DailyWisdom from "@/components/DailyWisdom";
@@ -81,39 +82,34 @@ const CHARACTERS: BuddhistCharacter[] = [
 ];
 
 function CharacterIcon({ id, size = 42 }: { id: CharacterId; size?: number }) {
+  const iconSize = Math.round(size * 0.55);
+  const wrapper = {
+    width: size,
+    height: size,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "50%",
+    backgroundColor: "rgba(200,169,110,0.12)",
+  } as const;
   if (id === "buddha") {
     return (
-      <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="22" r="11" fill="#E8C9A0" />
-        <circle cx="23" cy="21" r="2.1" fill="#3D2B1F" />
-        <circle cx="41" cy="21" r="2.1" fill="#3D2B1F" />
-        <path d="M27 27 Q32 30 37 27" stroke="#3D2B1F" strokeWidth="1.7" strokeLinecap="round" />
-        <path d="M16 53 Q19 36 32 35 Q45 36 48 53 Q42 59 32 59 Q22 59 16 53Z" fill="#D4A545" />
-      </svg>
+      <div style={wrapper}>
+        <Crown size={iconSize} color="#D4A545" strokeWidth={1.5} />
+      </div>
     );
   }
-
   if (id === "avalokiteshvara") {
     return (
-      <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="21.5" r="10.5" fill="#E8C9A0" />
-        <path d="M32 7 L36 13 H28 L32 7Z" fill="#C8A96E" />
-        <circle cx="24" cy="21" r="2" fill="#3D2B1F" />
-        <circle cx="40" cy="21" r="2" fill="#3D2B1F" />
-        <path d="M26 27 Q32 29.5 38 27" stroke="#3D2B1F" strokeWidth="1.6" strokeLinecap="round" />
-        <path d="M15 55 Q17 37 32 35 Q47 37 49 55 Q41 60 32 60 Q23 60 15 55Z" fill="#7BA886" />
-      </svg>
+      <div style={wrapper}>
+        <Heart size={iconSize} color="#7BA886" strokeWidth={1.5} />
+      </div>
     );
   }
-
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="32" cy="22" r="11" fill="#E8C9A0" />
-      <circle cx="23" cy="21" r="2.1" fill="#3D2B1F" />
-      <circle cx="41" cy="21" r="2.1" fill="#3D2B1F" />
-      <path d="M26 26.5 Q32 24.2 38 26.5" stroke="#3D2B1F" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M17 54 Q17 37 32 34 Q47 37 47 54 Q40 59 32 59 Q24 59 17 54Z" fill="#6E6A62" />
-    </svg>
+    <div style={wrapper}>
+      <Flame size={iconSize} color="#6E6A62" strokeWidth={1.5} />
+    </div>
   );
 }
 

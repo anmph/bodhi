@@ -34,8 +34,15 @@ const PracticeLogSchema = new Schema<IPracticeLogDocument>(
 
 PracticeLogSchema.index({ userId: 1, date: -1 });
 
+// During dev hot-reloads Mongoose caches the first-registered model.
+// If the schema changed (e.g. a new enum value was added) the stale
+// cached model will reject the new values.  Delete and re-register
+// so the running schema always matches this file.
+if (mongoose.models.PracticeLog) {
+  delete mongoose.models.PracticeLog;
+}
+
 const PracticeLog: Model<IPracticeLogDocument> =
-  (mongoose.models.PracticeLog as Model<IPracticeLogDocument>) ||
   mongoose.model<IPracticeLogDocument>("PracticeLog", PracticeLogSchema);
 
 export default PracticeLog;
