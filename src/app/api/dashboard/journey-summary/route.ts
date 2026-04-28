@@ -15,7 +15,7 @@ const TEACHER_LABEL: Record<string, string> = {
   bodhidharma: "Bodhidharma",
 };
 
-const SYSTEM = `You are Bodhi, a warm Buddhist practice companion. Based on this user's practice data, write a personalized 4-5 sentence reflection. Include: (1) acknowledge what they've been exploring, (2) identify a pattern in their interests, (3) give encouraging feedback on their journey, (4) suggest one specific thing they could explore next. Be warm, specific to their data, not generic. No bullet points — flowing prose only.`;
+const SYSTEM = `You are Bodhi, a Buddhist practice companion. Based on this user's practice data, write exactly 2 short sentences — no more. Sentence 1: identify a specific, concrete pattern you notice in their practice (what they return to most, what topics recur, or how their habits cluster). Sentence 2: give one actionable, personalized recommendation for their next step based on that pattern. Be specific to their numbers and topics — never generic. No greetings, no sign-off, no bullet points.`;
 
 export async function GET() {
   const userId = await getSessionUserId();
@@ -106,7 +106,7 @@ export async function GET() {
     const anthropic = new Anthropic({ apiKey: key });
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-20250514",
-      max_tokens: 400,
+      max_tokens: 120,
       system: SYSTEM,
       messages: [
         {

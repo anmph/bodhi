@@ -235,6 +235,7 @@ export function topTermsFromSessions(
   });
 }
 
+/** @deprecated kept for any external callers */
 export function startOfUtcWeekMonday(d: Date): string {
   const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
   const dow = x.getUTCDay();
@@ -243,19 +244,32 @@ export function startOfUtcWeekMonday(d: Date): string {
   return x.toISOString().slice(0, 10);
 }
 
-export function labelWeekStart(weekStartIso: string): string {
-  const d = new Date(`${weekStartIso}T00:00:00.000Z`);
+/** Returns a YYYY-MM-DD string for the UTC date of the given timestamp. */
+export function toUtcDayKey(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+export function labelDayKey(dayIso: string): string {
+  const d = new Date(`${dayIso}T00:00:00.000Z`);
   return d.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
-    year: "numeric",
     timeZone: "UTC",
   });
 }
 
+/** @deprecated Use SentimentDayRow */
 export type SentimentWeekRow = {
   weekStart: string;
   weekLabel: string;
+  positive: number;
+  curious: number;
+  struggling: number;
+};
+
+export type SentimentDayRow = {
+  weekStart: string;   // field name kept for API/UI compatibility
+  weekLabel: string;   // holds the day label e.g. "Apr 28"
   positive: number;
   curious: number;
   struggling: number;
@@ -265,7 +279,7 @@ const MOODS: ConversationMood[] = ["positive", "curious", "struggling"];
 
 export function buildSentimentTimeline(
   sessions: LeanSessionForInsights[]
-): SentimentWeekRow[] {
+): SentimentDayRow[] {
   const map = new Map<
     string,
     { positive: number; curious: number; struggling: number }
@@ -276,20 +290,20 @@ export function buildSentimentTimeline(
     if (!mood || !MOODS.includes(mood)) continue;
     const raw = s.updatedAt ? new Date(s.updatedAt) : null;
     if (!raw || Number.isNaN(raw.getTime())) continue;
-    const weekStart = startOfUtcWeekMonday(raw);
-    let row = map.get(weekStart);
+    const dayKey = toUtcDayKey(raw);
+    let row = map.get(dayKey);
     if (!row) {
       row = { positive: 0, curious: 0, struggling: 0 };
-      map.set(weekStart, row);
+      map.set(dayKey, row);
     }
     row[mood] += 1;
   }
 
   return Array.from(map.entries())
     .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([weekStart, counts]) => ({
-      weekStart,
-      weekLabel: labelWeekStart(weekStart),
+    .map(([dayKey, counts]) => ({
+      weekStart: dayKey,
+      weekLabel: labelDayKey(dayKey),
       ...counts,
     }));
 }

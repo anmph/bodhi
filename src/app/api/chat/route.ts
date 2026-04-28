@@ -11,6 +11,7 @@ import {
   buildPersonalizationContext,
   deriveProfileFromSessions,
 } from "@/lib/personalization";
+import { classifyAndSaveSession } from "@/lib/classifySession";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -170,6 +171,18 @@ export async function POST(req: Request) {
             (toolsUsed.length ? ` [tools: ${toolsUsed.join(", ")}]` : ""),
           date: new Date(),
         });
+        // Classify mood in the background so the Insights chart always
+        // reflects the latest conversations without a manual trigger.
+        const anthropicKey = process.env.ANTHROPIC_API_KEY;
+        if (anthropicKey) {
+          void classifyAndSaveSession(
+            resolvedSessionId,
+            finalMessages as { role: string; content: string }[],
+            anthropicKey
+          ).catch((err: unknown) => {
+            console.error("[api/chat] background mood classify failed:", err);
+          });
+        }
       } catch (err) {
         console.error("[api/chat] failed to persist session", err);
       }

@@ -4,6 +4,7 @@ import { getSessionUserId } from "@/lib/apiAuth";
 import { connectToDatabase } from "@/lib/mongodb";
 import PracticeLog from "@/models/PracticeLog";
 import {
+  bestStreakFromDays,
   consecutiveStreakEndingToday,
   subtractPracticeDays,
   toPracticeDayKey,
@@ -16,8 +17,6 @@ export async function GET() {
   }
 
   await connectToDatabase();
-  // Pull the last ~180 days of practice logs; more than enough for a streak
-  // + current-month heat map.
   const since = subtractPracticeDays(new Date(), 180);
   const logs = await PracticeLog.find({
     userId: new Types.ObjectId(userId),
@@ -35,12 +34,10 @@ export async function GET() {
     dayActivityCounts[key] = (dayActivityCounts[key] ?? 0) + 1;
   }
 
-  const streakDays = consecutiveStreakEndingToday(
-    logs.map((l) => new Date(l.date))
-  );
+  const logDates = logs.map((l) => new Date(l.date));
+  const streakDays = consecutiveStreakEndingToday(logDates);
+  const bestStreak = bestStreakFromDays(logDates);
 
-  // Build a current-month grid (Mon-start) so the client can render the heat map
-  // without replicating calendar math.
   const now = new Date();
   const year = now.getFullYear();
   const month = now.getMonth();
@@ -69,6 +66,7 @@ export async function GET() {
 
   return NextResponse.json({
     streakDays,
+    bestStreak,
     totalActiveDays: activeDays.size,
     monthGrid: cells,
   });

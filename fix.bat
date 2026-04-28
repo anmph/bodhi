@@ -1,0 +1,6 @@
+@echo off
+echo Cleaning corrupted Next.js build cache...
+cd /d "%~dp0"
+rmdir /s /q .next 2>nul
+echo Done. Restarting dev server...
+npm run dev

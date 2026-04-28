@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import {
@@ -46,22 +46,54 @@ interface BodhiChatPayload {
   error?: string;
 }
 
-const CHART_COLORS = [
-  "#C8A96E",
-  "#9BC99B",
-  "#7CB8D9",
-  "#D49B9B",
-  "#B8A06E",
-  "#8FB8D4",
-  "#C4956A",
-  "#A8A49C",
-  "#D4A574",
-  "#C18A6D",
+/** Gold-toned palette from pale straw to deep amber — all shades stay on-theme. */
+const DONUT_COLORS = [
+  "#C8A96E", // primary gold
+  "#E2CC90", // light straw
+  "#A08050", // dark gold
+  "#D4B87A", // warm mid-gold
+  "#8A6E3A", // deep amber
+  "#DEC87C", // bright gold
+  "#B89060", // tan gold
+  "#F0DDA0", // pale cream-gold
+  "#967040", // rich amber
+  "#CAB482", // soft gold
 ];
 
 function percentage(value: number, total: number) {
   if (!total) return 0;
   return Math.round((value / total) * 1000) / 10;
+}
+
+function capitalize(s: string) {
+  if (!s) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function renderPctLabel(props: {
+  cx?: number; cy?: number; midAngle?: number;
+  innerRadius?: number; outerRadius?: number; percent?: number;
+}) {
+  const { cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 } = props;
+  if (percent < 0.06) return null; // skip slices too small to label
+  const pct = Math.round(percent * 1000) / 10;
+  const RADIAN = Math.PI / 180;
+  const r = innerRadius + (outerRadius - innerRadius) * 0.52;
+  const x = cx + r * Math.cos(-midAngle * RADIAN);
+  const y = cy + r * Math.sin(-midAngle * RADIAN);
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor="middle"
+      dominantBaseline="central"
+      fill="#1A1200"
+      fontSize={10}
+      fontWeight="700"
+    >
+      {`${pct}%`}
+    </text>
+  );
 }
 
 /* ─── Donut chart for topic mix ─── */
@@ -90,7 +122,7 @@ function TopicDonut({
 
   return (
     <>
-      <div style={{ width: "100%", height: 200 }}>
+      <div style={{ width: "100%", height: 210 }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -99,19 +131,22 @@ function TopicDonut({
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={50}
-              outerRadius={80}
+              innerRadius={52}
+              outerRadius={84}
               paddingAngle={2}
-              strokeWidth={0}
+              stroke="#181818"
+              strokeWidth={1}
+              labelLine={false}
+              label={renderPctLabel}
             >
               {chartData.map((_, i) => (
-                <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                <Cell key={i} fill={DONUT_COLORS[i % DONUT_COLORS.length]} />
               ))}
             </Pie>
             <Tooltip
               contentStyle={{
                 backgroundColor: "#1C1C1C",
-                border: "1px solid #333",
+                border: "1px solid #3A3020",
                 borderRadius: 8,
                 color: "#E8E1D6",
                 fontSize: 12,
@@ -124,22 +159,22 @@ function TopicDonut({
                       ? Number(value) || 0
                       : 0;
                 const pct = percentage(n, total);
-                return [`${n} (${pct}%)`, String(name)];
+                return [`${n} sessions (${pct}%)`, capitalize(String(name))];
               }}
             />
           </PieChart>
         </ResponsiveContainer>
       </div>
       {/* Legend */}
-      <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-1 px-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-2 px-1">
         {chartData.map((d, i) => (
           <div key={d.name} className="flex items-center gap-1.5">
             <span
-              className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
-              style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
+              className="inline-block w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }}
             />
-            <span style={{ color: "#A8A49C", fontSize: "0.72rem" }}>
-              {d.name} ({d.pct}%)
+            <span style={{ color: "#C4BDB2", fontSize: "0.73rem" }}>
+              {capitalize(d.name)} ({d.pct}%)
             </span>
           </div>
         ))}
@@ -155,8 +190,9 @@ export default function BodhiChatInsights() {
   const [isLoading, setIsLoading] = useState(true);
   const [classifyBusy, setClassifyBusy] = useState(false);
   const [classifyMessage, setClassifyMessage] = useState<string | null>(null);
+  const autoClassifyDone = useRef(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (): Promise<BodhiChatPayload | null> => {
     setLoadError(null);
     try {
       const res = await fetch("/api/insights/bodhi-chat", { cache: "no-store" });
@@ -165,16 +201,47 @@ export default function BodhiChatInsights() {
       if (!res.ok || json.ok === false) {
         setLoadError(json.error ?? "Could not load Bodhi chat insights.");
       }
+      return json;
     } catch {
       setLoadError("Could not reach the server.");
       setData(null);
+      return null;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void load();
+    void (async () => {
+      const json = await load();
+      // Auto-classify any pending sessions so the chart always reflects the
+      // latest conversations without requiring a manual button click.
+      if (
+        !autoClassifyDone.current &&
+        json?.ok &&
+        json.signedIn &&
+        json.canClassify &&
+        json.unclassifiedSessionCount > 0
+      ) {
+        autoClassifyDone.current = true;
+        setClassifyBusy(true);
+        setClassifyMessage("Updating chart with your latest conversations…");
+        try {
+          const res = await fetch("/api/insights/bodhi-chat/classify", { method: "POST" });
+          const result = (await res.json()) as { ok?: boolean; classified?: number; error?: string };
+          if (res.ok && result.classified) {
+            await load();
+            setClassifyMessage(null);
+          } else {
+            setClassifyMessage(null);
+          }
+        } catch {
+          setClassifyMessage(null);
+        } finally {
+          setClassifyBusy(false);
+        }
+      }
+    })();
   }, [load]);
 
   const runClassify = async () => {
@@ -198,9 +265,9 @@ export default function BodhiChatInsights() {
         setClassifyMessage(json.error ?? "Classification failed.");
       } else {
         setClassifyMessage(
-          json.classified != null
-            ? `Labeled ${json.classified} conversation(s). Refreshing chart…`
-            : json.message ?? "Done."
+          json.classified != null && json.classified > 0
+            ? `Labeled ${json.classified} conversation(s). Chart updated.`
+            : "All conversations are already labeled — chart is up to date."
         );
         await load();
       }
@@ -480,7 +547,7 @@ export default function BodhiChatInsights() {
                       {data.communityTerms.map((_, i) => (
                         <Cell
                           key={i}
-                          fill={CHART_COLORS[i % CHART_COLORS.length]}
+                          fill={DONUT_COLORS[i % DONUT_COLORS.length]}
                         />
                       ))}
                     </Bar>
@@ -509,7 +576,7 @@ export default function BodhiChatInsights() {
               <span style={{ color: "#9BC99B" }}>positive</span>,{" "}
               <span style={{ color: "#8FB8D4" }}>curious</span>, or{" "}
               <span style={{ color: "#D49B9B" }}>struggling</span> (Claude), grouped
-              by the week the session last updated. Labels are stored on the session so
+              by the day the session last updated. Labels are stored on the session so
               the chart stays fast after the first pass.
             </p>
 
@@ -594,11 +661,7 @@ export default function BodhiChatInsights() {
               <button
                 type="button"
                 onClick={() => void runClassify()}
-                disabled={
-                  classifyBusy ||
-                  !data.canClassify ||
-                  data.unclassifiedSessionCount === 0
-                }
+                disabled={classifyBusy || !data.canClassify}
                 className="rounded-[10px] px-4 py-2 text-[0.82rem] font-semibold transition-opacity disabled:opacity-45"
                 style={{
                   backgroundColor: "rgba(200, 169, 110, 0.2)",
@@ -610,7 +673,9 @@ export default function BodhiChatInsights() {
                   ? "Analyzing…"
                   : status !== "authenticated"
                     ? "Sign in to run analysis"
-                    : "Analyze next 10 conversations"}
+                    : data.unclassifiedSessionCount > 0
+                      ? `Analyze next 10 conversations (${data.unclassifiedSessionCount} waiting)`
+                      : "Refresh chart"}
               </button>
               <span style={{ color: "#6E6A62", fontSize: "0.78rem" }}>
                 {data.canClassify
