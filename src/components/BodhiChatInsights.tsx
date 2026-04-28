@@ -4,10 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import {
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -41,9 +46,106 @@ interface BodhiChatPayload {
   error?: string;
 }
 
+const CHART_COLORS = [
+  "#C8A96E",
+  "#9BC99B",
+  "#7CB8D9",
+  "#D49B9B",
+  "#B8A06E",
+  "#8FB8D4",
+  "#C4956A",
+  "#A8A49C",
+  "#D4A574",
+  "#C18A6D",
+];
+
 function percentage(value: number, total: number) {
   if (!total) return 0;
   return Math.round((value / total) * 1000) / 10;
+}
+
+/* ─── Donut chart for topic mix ─── */
+function TopicDonut({
+  terms,
+  total,
+  emptyMessage,
+}: {
+  terms: TermRow[];
+  total: number;
+  emptyMessage: React.ReactNode;
+}) {
+  if (terms.length === 0) {
+    return (
+      <p style={{ color: "#6E6A62", fontSize: "0.84rem", padding: "1rem 0" }}>
+        {emptyMessage}
+      </p>
+    );
+  }
+
+  const chartData = terms.map((r) => ({
+    name: r.term,
+    value: r.count,
+    pct: percentage(r.count, total),
+  }));
+
+  return (
+    <>
+      <div style={{ width: "100%", height: 200 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={80}
+              paddingAngle={2}
+              strokeWidth={0}
+            >
+              {chartData.map((_, i) => (
+                <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#1C1C1C",
+                border: "1px solid #333",
+                borderRadius: 8,
+                color: "#E8E1D6",
+                fontSize: 12,
+              }}
+              formatter={(value, name) => {
+                const n =
+                  typeof value === "number"
+                    ? value
+                    : typeof value === "string"
+                      ? Number(value) || 0
+                      : 0;
+                const pct = percentage(n, total);
+                return [`${n} (${pct}%)`, String(name)];
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      {/* Legend */}
+      <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-1 px-1">
+        {chartData.map((d, i) => (
+          <div key={d.name} className="flex items-center gap-1.5">
+            <span
+              className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+              style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
+            />
+            <span style={{ color: "#A8A49C", fontSize: "0.72rem" }}>
+              {d.name} ({d.pct}%)
+            </span>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }
 
 export default function BodhiChatInsights() {
@@ -116,6 +218,7 @@ export default function BodhiChatInsights() {
 
   return (
     <section className="mb-6 space-y-5">
+      {/* ── Intro ── */}
       <div
         className="rounded-[14px] px-6 py-6"
         style={{ backgroundColor: "#242424", border: "1px solid #333333" }}
@@ -130,6 +233,7 @@ export default function BodhiChatInsights() {
         </p>
       </div>
 
+      {/* ── Loading ── */}
       {isLoading && (
         <div
           className="rounded-[14px] px-5 py-4 text-center animate-pulse"
@@ -144,6 +248,7 @@ export default function BodhiChatInsights() {
         </div>
       )}
 
+      {/* ── Error ── */}
       {loadError && !isLoading && (
         <div
           className="rounded-[12px] px-4 py-3"
@@ -166,85 +271,255 @@ export default function BodhiChatInsights() {
 
       {data && data.dbConfigured && (
         <>
-          {/* What people ask most */}
+          {/* ═══════════ 1. KEY INSIGHTS SUMMARY CARDS ═══════════ */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              {
+                label: "Sessions Analyzed",
+                value:
+                  data.communitySessionSampleSize +
+                  (data.personalSessionSampleSize || 0),
+              },
+              { label: "Topics Tracked", value: data.communityTerms.length },
+              { label: "Mood Labeled", value: data.classifiedSessionCount },
+              { label: "Awaiting Analysis", value: data.unclassifiedSessionCount },
+            ].map((card) => (
+              <div
+                key={card.label}
+                className="rounded-xl px-4 py-4 text-center"
+                style={{
+                  backgroundColor: "#1E1E1E",
+                  border: "1px solid #2A2A2A",
+                }}
+              >
+                <p
+                  className="text-2xl font-semibold mb-1"
+                  style={{ color: "#C8A96E" }}
+                >
+                  {card.value}
+                </p>
+                <p className="text-xs" style={{ color: "#8F8A81" }}>
+                  {card.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* ═══════════ 2. TOPIC MIX — DONUT CHARTS ═══════════ */}
           <div
             className="rounded-[14px] p-5"
             style={{ backgroundColor: "#242424", border: "1px solid #323232" }}
           >
-            <h3 className="font-display text-[1.35rem] mb-1" style={{ color: "#F0EDE6" }}>
+            <h3
+              className="font-display text-[1.35rem] mb-1"
+              style={{ color: "#F0EDE6" }}
+            >
+              Topic mix: others vs you
+            </h3>
+            <p className="mb-4 text-[0.82rem]" style={{ color: "#8F8A81" }}>
+              How conversation themes are distributed — other practitioners beside
+              your own chats.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Community donut */}
+              <div
+                className="rounded-[10px] p-4"
+                style={{ backgroundColor: "#202020", border: "1px solid #2F2F2F" }}
+              >
+                <h4
+                  className="font-display text-[1.05rem] mb-2"
+                  style={{ color: "#E8D5A8" }}
+                >
+                  {data.communityExcludesYou ? "Other practitioners" : "All users"}
+                </h4>
+                <TopicDonut
+                  terms={data.communityTerms}
+                  total={communityTotal}
+                  emptyMessage="No data yet."
+                />
+              </div>
+
+              {/* Personal donut */}
+              <div
+                className="rounded-[10px] p-4"
+                style={{ backgroundColor: "#202020", border: "1px solid #2F2F2F" }}
+              >
+                <h4
+                  className="font-display text-[1.05rem] mb-2"
+                  style={{ color: "#E8D5A8" }}
+                >
+                  You
+                </h4>
+                {status !== "authenticated" && (
+                  <p
+                    style={{
+                      color: "#A8A49C",
+                      fontSize: "0.86rem",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => void signIn("google")}
+                      className="underline font-semibold"
+                      style={{ color: "#C8A96E" }}
+                    >
+                      Sign in with Google
+                    </button>{" "}
+                    to see your personal themes next to other practitioners.
+                  </p>
+                )}
+                {status === "authenticated" && data.personalTerms && (
+                  <>
+                    <p
+                      className="mb-2 text-[0.76rem]"
+                      style={{ color: "#6E6A62" }}
+                    >
+                      Sample: {data.personalSessionSampleSize} of your recent
+                      sessions.
+                    </p>
+                    <TopicDonut
+                      terms={data.personalTerms}
+                      total={personalTotal}
+                      emptyMessage={
+                        <>
+                          No chats yet. Start a{" "}
+                          <Link
+                            href="/chat"
+                            className="underline"
+                            style={{ color: "#C8A96E" }}
+                          >
+                            conversation
+                          </Link>{" "}
+                          and check back.
+                        </>
+                      }
+                    />
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ═══════════ 3. WHAT PEOPLE ASK MOST — HORIZONTAL BAR CHART ═══════════ */}
+          <div
+            className="rounded-[14px] p-5"
+            style={{ backgroundColor: "#242424", border: "1px solid #323232" }}
+          >
+            <h3
+              className="font-display text-[1.35rem] mb-1"
+              style={{ color: "#F0EDE6" }}
+            >
               What people ask most
             </h3>
             <p className="mb-4 text-[0.82rem]" style={{ color: "#8F8A81" }}>
               {data.communityExcludesYou
-                ? `Themes and phrases from other practitioners’ chats (your sessions are excluded). Sample: up to ${data.communitySessionSampleSize || "—"} recent sessions.`
+                ? `Themes and phrases from other practitioners' chats (your sessions are excluded). Sample: up to ${data.communitySessionSampleSize || "—"} recent sessions.`
                 : `Themes and phrases from user messages across up to ${data.communitySessionSampleSize || "—"} recent sessions (all users). Sign in to compare with your own mix.`}
             </p>
             {data.communityTerms.length === 0 ? (
               <p style={{ color: "#A8A49C", fontSize: "0.88rem" }}>
-                {data.communityExcludesYou && (data.communitySessionSampleSize ?? 0) === 0
+                {data.communityExcludesYou &&
+                (data.communitySessionSampleSize ?? 0) === 0
                   ? "No chats from other accounts in this sample yet. When someone else uses Bodhi, their themes will appear here — your personal column still reflects only you."
                   : "No on-topic user messages in the sample yet. As people chat, recurring themes will appear here."}
               </p>
             ) : (
-              <ol className="space-y-2.5">
-                {data.communityTerms.map((row, idx) => {
-                  const rank = idx + 1;
-                  const pct = percentage(row.count, communityTotal);
-                  const sizeRem = Math.max(0.78, 1.05 - idx * 0.045);
-                  return (
-                    <li
-                      key={row.term}
-                      className="flex items-center justify-between gap-3 rounded-[10px] px-3 py-2"
-                      style={{ backgroundColor: "#202020", border: "1px solid #2F2F2F" }}
-                    >
-                      <div className="flex items-baseline gap-2 min-w-0">
-                        <span
-                          className="font-display shrink-0"
-                          style={{ color: "#6E6A62", fontSize: "0.75rem" }}
-                        >
-                          {rank}.
-                        </span>
-                        <span
-                          className="truncate font-medium"
-                          style={{ color: "#E8D5A8", fontSize: `${sizeRem}rem` }}
-                        >
-                          {row.term}
-                        </span>
-                      </div>
-                      <span
-                        className="shrink-0 text-[0.78rem] font-semibold"
-                        style={{ color: "#C8A96E" }}
-                      >
-                        {row.count} ({pct}%)
-                      </span>
-                    </li>
-                  );
-                })}
-              </ol>
+              <div
+                className="w-full"
+                style={{
+                  height: Math.max(280, data.communityTerms.length * 38),
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={data.communityTerms.map((r) => ({
+                      ...r,
+                      pct: percentage(r.count, communityTotal),
+                    }))}
+                    layout="vertical"
+                    margin={{ top: 4, right: 30, left: 10, bottom: 4 }}
+                  >
+                    <CartesianGrid
+                      stroke="#2A2A2A"
+                      strokeDasharray="3 3"
+                      horizontal={false}
+                    />
+                    <XAxis
+                      type="number"
+                      tick={{ fill: "#8F8A81", fontSize: 11 }}
+                      allowDecimals={false}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="term"
+                      width={130}
+                      tick={{ fill: "#D4CFC7", fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1C1C1C",
+                        border: "1px solid #333",
+                        borderRadius: 8,
+                        color: "#E8E1D6",
+                        fontSize: 12,
+                      }}
+                      formatter={(value, _name, props: { payload?: { pct?: number } }) => {
+                        const n =
+                          typeof value === "number"
+                            ? value
+                            : typeof value === "string"
+                              ? Number(value) || 0
+                              : 0;
+                        const pct = props.payload?.pct ?? 0;
+                        return [`${n} mentions (${pct}%)`, "Count"];
+                      }}
+                    />
+                    <Bar dataKey="count" radius={[0, 4, 4, 0]}>
+                      {data.communityTerms.map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={CHART_COLORS[i % CHART_COLORS.length]}
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             )}
           </div>
 
-          {/* Sentiment over time */}
+          {/* ═══════════ 4. SENTIMENT OVER TIME — LINE CHART (unchanged) ═══════════ */}
           <div
             className="rounded-[14px] p-5"
             style={{ backgroundColor: "#242424", border: "1px solid #323232" }}
           >
-            <h3 className="font-display text-[1.35rem] mb-1" style={{ color: "#F0EDE6" }}>
+            <h3
+              className="font-display text-[1.35rem] mb-1"
+              style={{ color: "#F0EDE6" }}
+            >
               Sentiment over time
             </h3>
-            <p className="mb-4 text-[0.82rem] leading-relaxed" style={{ color: "#8F8A81" }}>
+            <p
+              className="mb-4 text-[0.82rem] leading-relaxed"
+              style={{ color: "#8F8A81" }}
+            >
               Each line counts sessions labeled{" "}
               <span style={{ color: "#9BC99B" }}>positive</span>,{" "}
               <span style={{ color: "#8FB8D4" }}>curious</span>, or{" "}
-              <span style={{ color: "#D49B9B" }}>struggling</span> (Claude), grouped by the
-              week the session last updated. Labels are stored on the session so the chart
-              stays fast after the first pass.
+              <span style={{ color: "#D49B9B" }}>struggling</span> (Claude), grouped
+              by the week the session last updated. Labels are stored on the session so
+              the chart stays fast after the first pass.
             </p>
 
             {data.sentimentTimeline.length === 0 ? (
-              <p className="mb-3" style={{ color: "#A8A49C", fontSize: "0.88rem" }}>
-                No labeled conversations yet. When you&apos;re signed in, you can run a small
-                batch analysis (up to 10 sessions per click) to seed the chart.
+              <p
+                className="mb-3"
+                style={{ color: "#A8A49C", fontSize: "0.88rem" }}
+              >
+                No labeled conversations yet. When you&apos;re signed in, you can run
+                a small batch analysis (up to 10 sessions per click) to seed the chart.
               </p>
             ) : (
               <div className="w-full" style={{ height: 280 }}>
@@ -258,11 +533,16 @@ export default function BodhiChatInsights() {
                       dataKey="weekStart"
                       tick={{ fill: "#8F8A81", fontSize: 11 }}
                       tickFormatter={(v: string) => {
-                        const row = data.sentimentTimeline.find((r) => r.weekStart === v);
+                        const row = data.sentimentTimeline.find(
+                          (r) => r.weekStart === v
+                        );
                         return row?.weekLabel ?? v;
                       }}
                     />
-                    <YAxis tick={{ fill: "#8F8A81", fontSize: 11 }} allowDecimals={false} />
+                    <YAxis
+                      tick={{ fill: "#8F8A81", fontSize: 11 }}
+                      allowDecimals={false}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "#1C1C1C",
@@ -278,7 +558,9 @@ export default function BodhiChatInsights() {
                         return row?.weekLabel ?? "";
                       }}
                     />
-                    <Legend wrapperStyle={{ color: "#A8A49C", fontSize: 12 }} />
+                    <Legend
+                      wrapperStyle={{ color: "#A8A49C", fontSize: 12 }}
+                    />
                     <Line
                       type="monotone"
                       dataKey="positive"
@@ -341,143 +623,6 @@ export default function BodhiChatInsights() {
                 {classifyMessage}
               </p>
             )}
-          </div>
-
-          {/* Community vs personal topic mix */}
-          <div
-            className="rounded-[14px] p-5"
-            style={{ backgroundColor: "#242424", border: "1px solid #323232" }}
-          >
-            <h3 className="font-display text-[1.35rem] mb-1" style={{ color: "#F0EDE6" }}>
-              Topic mix: others vs you
-            </h3>
-            <p className="mb-4 text-[0.82rem]" style={{ color: "#8F8A81" }}>
-              Same ranking as above: other practitioners (excluding you when signed in) beside
-              your own chats.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div
-                className="rounded-[10px] p-4"
-                style={{ backgroundColor: "#202020", border: "1px solid #2F2F2F" }}
-              >
-                <h4 className="font-display text-[1.05rem] mb-3" style={{ color: "#E8D5A8" }}>
-                  {data.communityExcludesYou ? "Other practitioners" : "All users"}
-                </h4>
-                {data.communityTerms.length === 0 ? (
-                  <p style={{ color: "#6E6A62", fontSize: "0.84rem" }}>No data yet.</p>
-                ) : (
-                  <div className="space-y-2.5">
-                    {data.communityTerms.map((row) => {
-                      const pct = percentage(row.count, communityTotal);
-                      return (
-                        <div key={`c-${row.term}`}>
-                          <div className="flex items-center justify-between mb-1">
-                            <span
-                              className="truncate pr-2"
-                              style={{ color: "#D4CFC7", fontSize: "0.82rem" }}
-                            >
-                              {row.term}
-                            </span>
-                            <span
-                              style={{ color: "#C8A96E", fontSize: "0.76rem", fontWeight: 600 }}
-                            >
-                              {pct}%
-                            </span>
-                          </div>
-                          <div
-                            className="h-2 rounded-full"
-                            style={{ backgroundColor: "#1C1C1C" }}
-                          >
-                            <div
-                              className="h-full rounded-full"
-                              style={{ width: `${pct}%`, backgroundColor: "#C8A96E" }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              <div
-                className="rounded-[10px] p-4"
-                style={{ backgroundColor: "#202020", border: "1px solid #2F2F2F" }}
-              >
-                <h4 className="font-display text-[1.05rem] mb-3" style={{ color: "#E8D5A8" }}>
-                  You
-                </h4>
-                {status !== "authenticated" && (
-                  <p style={{ color: "#A8A49C", fontSize: "0.86rem", lineHeight: 1.6 }}>
-                    <button
-                      type="button"
-                      onClick={() => void signIn("google")}
-                      className="underline font-semibold"
-                      style={{ color: "#C8A96E" }}
-                    >
-                      Sign in with Google
-                    </button>{" "}
-                    to see your personal themes next to other practitioners.
-                  </p>
-                )}
-                {status === "authenticated" && data.personalTerms && (
-                  <>
-                    <p className="mb-3 text-[0.76rem]" style={{ color: "#6E6A62" }}>
-                      Sample: {data.personalSessionSampleSize} of your recent sessions.
-                    </p>
-                    {data.personalTerms.length === 0 ? (
-                      <p style={{ color: "#6E6A62", fontSize: "0.84rem" }}>
-                        No chats yet. Start a{" "}
-                        <Link href="/chat" className="underline" style={{ color: "#C8A96E" }}>
-                          conversation
-                        </Link>{" "}
-                        and check back.
-                      </p>
-                    ) : (
-                      <div className="space-y-2.5">
-                        {data.personalTerms.map((row) => {
-                          const pct = percentage(row.count, personalTotal);
-                          return (
-                            <div key={`p-${row.term}`}>
-                              <div className="flex items-center justify-between mb-1">
-                                <span
-                                  className="truncate pr-2"
-                                  style={{ color: "#D4CFC7", fontSize: "0.82rem" }}
-                                >
-                                  {row.term}
-                                </span>
-                                <span
-                                  style={{
-                                    color: "#C8A96E",
-                                    fontSize: "0.76rem",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {pct}%
-                                </span>
-                              </div>
-                              <div
-                                className="h-2 rounded-full"
-                                style={{ backgroundColor: "#1C1C1C" }}
-                              >
-                                <div
-                                  className="h-full rounded-full"
-                                  style={{
-                                    width: `${pct}%`,
-                                    backgroundColor: "rgba(200, 169, 110, 0.55)",
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
           </div>
         </>
       )}
